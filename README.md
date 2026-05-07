@@ -21,7 +21,7 @@ Jika kamu adalah anggota tim yang memegang kode sumber pertama kali, ikuti langk
     ```
 3.  **Hubungkan ke Repositori ini**:
     ```bash
-    git remote add origin [https://github.com/PA-B24-2026/PA_PBO_B24_2026.git](https://github.com/PA-B24-2026/PA_PBO_B24_2026.git)
+    git remote add origin https://github.com/PA-B24-2026/PA_PBO_B24_2026.git
     ```
 4.  **Ambil README (Sangat Penting)**:
     ```bash
@@ -38,7 +38,7 @@ Jika kamu adalah anggota tim yang memegang kode sumber pertama kali, ikuti langk
 
 ## Prasyarat (Prerequisites)
 Sebelum menjalankan aplikasi ini, pastikan kamu sudah menginstal:
-*   **Java Development Kit (JDK)** versi 17 atau terbaru (untuk PBO).
+*   **Java Development Kit (JDK)** versi 17 atau terbaru.
 *   **Intellij Idea** atau **VS Code** dengan ekstensi yang sesuai.
 *   **MySQL**.
 
@@ -49,7 +49,7 @@ Sebelum menjalankan aplikasi ini, pastikan kamu sudah menginstal:
 ### 1. Clone Repositori
 Jika kamu baru ingin mengambil kode dari GitHub ke laptop baru:
 ```bash
-git clone [https://github.com/PA-B24-2026/PA_PBO_B24_2026.git](https://github.com/PA-B24-2026/PA_PBO_B24_2026.git)
+git clone https://github.com/PA-B24-2026/PA_PBO_B24_2026.git
 cd PA_PBO_B24_2026
 ```
 
