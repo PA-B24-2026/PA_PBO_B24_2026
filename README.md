@@ -54,7 +54,7 @@ cd PA_PBO_B24_2026
 ```
 
 ### 2. Setelah clone, jalankan program seperti biasa menggunakan visual studio
-1. Masuk ke aplikasi visual studio.
+1. Masuk ke aplikasi yang kamu gunakan.
 2. Buka folder dimana repo _di-clone_.
 3. Kemudian klik tombol run seperti biasanya.
 4. Selamat! Programnya telah berhasil dijalankan
