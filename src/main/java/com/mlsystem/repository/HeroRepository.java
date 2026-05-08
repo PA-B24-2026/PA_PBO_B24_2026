@@ -1,4 +1,9 @@
 package com.mlsystem.repository;
 
-public class HeroRepository {
+import com.mlsystem.model.Hero;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository // Menandakan bahwa ini adalah komponen pengakses database
+public interface HeroRepository extends JpaRepository<Hero, Long> {
 }
