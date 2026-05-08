@@ -2,20 +2,19 @@ package com.mlsystem.model;
 
 public class Hero {
 
-    // ===== PRIVATE VARIABLES (Encapsulation) =====
+    // PRIVATE VARIABLES (Encapsulation)
     private Long id;
     private String name;
-    private String role;        // Marksman, Mage, Tank, Fighter, Support, Assassigitn
-    private String tier;        // S, A, B, C, D
-    private String imageUrl;    // Path ke foto hero
-    private String description;
+    private String role;
+    private String tier;
+    private String imageUrl;
 
-    // ===== CONSTRUCTOR KOSONG (wajib untuk Spring/JPA) =====
+    // CONSTRUCTOR KOSONG
     public Hero() {}
 
-    // ===== CONSTRUCTOR LENGKAP =====
+    // CONSTRUCTOR LENGKAP
     public Hero(Long id, String name, String role, String tier,
-                String imageUrl, String description) {
+                String imageUrl) {
         this.id = id;
         this.name = name;
         this.role = role;
@@ -23,7 +22,7 @@ public class Hero {
         this.imageUrl = imageUrl;
     }
 
-    // ===== GETTER & SETTER =====
+    // GETTER & SETTER
 
     public Long getId() {
         return id;
@@ -50,7 +49,7 @@ public class Hero {
         return tier;
     }
     public void setTier(String tier) {
-        if (tier != null && tier.matches("[SABCDsabcd]")) {
+        if (tier != null && tier.matches("[SABCsabc]")) {
             this.tier = tier.toUpperCase();
         } else {
             throw new IllegalArgumentException("Tier tidak valid: " + tier);
@@ -65,7 +64,7 @@ public class Hero {
     }
 
 
-    // ===== toString() untuk debugging =====
+    // toString() untuk debugging
     @Override
     public String toString() {
         return "Hero{" +
