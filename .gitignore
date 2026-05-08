@@ -1,0 +1,37 @@
+# === Compiled Java Files ===
+*.class
+
+# === Build / Output Directories ===
+out/
+build/
+target/
+
+# === Package Files ===
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# === IntelliJ IDEA ===
+.idea/
+*.iml
+*.iws
+
+# === Visual Studio ===
+.vs/
+*.user
+*.suo
+
+# === Log Files ===
+*.log
+hs_err_pid*
+
+# === OS Generated Files ===
+.DS_Store
+.DS_Store?
+._*
+.Trashes
+ehthumbs.db
+Thumbs.db
