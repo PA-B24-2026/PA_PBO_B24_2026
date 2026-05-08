@@ -49,6 +49,7 @@ src/
 5. static/: Semua file yang tidak diolah oleh Java ditaruh di sini. Jika kamu panggil gambar di HTML, jalurnya langsung dimulai dari /assets/heroes/.... 
 6. templates/: Tempat file HTML yang menggunakan Thymeleaf. Di sini kamu bisa melakukan looping data hero yang dikirim dari Backend. 
 7. application.properties: Kamu cukup isi baris kode untuk koneksi ke MySQL di sini satu kali saja.
+---
 
 ## Cara Menghubungkan Kode Lokal ke GitHub (Khusus Anggota)
 Jika kamu adalah anggota tim yang memegang kode sumber pertama kali, ikuti langkah ini untuk menghubungkan folder lokal ke repositori ini tanpa menghapus file yang ada:
