@@ -84,7 +84,7 @@ Sebelum menjalankan aplikasi ini, pastikan kamu sudah menginstal:
 
 ---
 
-## Cara Menjalankan Aplikasi
+## Cara Clone Aplikasi
 
 ### 1. Clone Repositori
 Jika kamu baru ingin mengambil kode dari GitHub ke laptop baru:
@@ -98,3 +98,9 @@ cd PA_PBO_B24_2026
 2. Buka folder dimana repo _di-clone_.
 3. Kemudian klik tombol run seperti biasanya.
 4. Selamat! Programnya telah berhasil dijalankan
+
+## Cara Menjalankan Aplikasi
+1. Buka folder projek
+2. Pilih file TierListApplication kemudian jalankan file ini
+3. Buka pada browser anda kemudian ketik `localhost:8080`
+4. Selamat! Anda sudah berhasil menjalankan projek ini!
