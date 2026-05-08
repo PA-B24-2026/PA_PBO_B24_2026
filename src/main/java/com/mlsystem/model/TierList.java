@@ -53,9 +53,10 @@ public class TierList {
         return lane;
     }
     public void setLane(String lane) {
-        // Validasi lane hanya boleh 5 nilai ini
-        if (lane != null && lane.matches("EXP|GOLD|MID|JUNGLE|ROAM")) {
-            this.lane = lane.toUpperCase();
+        // Validasi disesuaikan dengan data dari VB.NET / Database
+        if (lane != null && lane.matches("(?i)ExpLane|GoldLane|MidLane|Jungle|Roam")) {
+            // (?i) membuat validasi tidak mempedulikan huruf besar/kecil (case-insensitive)
+            this.lane = lane;
         } else {
             throw new IllegalArgumentException("Lane tidak valid: " + lane);
         }
