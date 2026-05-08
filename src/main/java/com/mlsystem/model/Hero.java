@@ -1,41 +1,59 @@
 package com.mlsystem.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "tb_hero")
 public class Hero {
 
-    // PRIVATE VARIABLES (Encapsulation)
-    private Long id;
-    private String name;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_hero")
+    private Long idHero;
+
+    @Column(name = "nama_hero")
+    private String namaHero;
+
+    @Column(name = "role")
     private String role;
-    private String tier;
-    private String imageUrl;
+
+    @Column(name = "counter")
+    private String counter; // Teks bebas, misal: "Chou, Kaja, Tigreal"
+
+    @Column(name = "sinergi")
+    private String sinergi; // Teks bebas, misal: "Atlas, Mathilda"
+
+    @Column(name = "gambar")
+    private String gambar; // misal: "/assets/heroes/chou.png"
 
     // CONSTRUCTOR KOSONG
     public Hero() {}
 
     // CONSTRUCTOR LENGKAP
-    public Hero(Long id, String name, String role, String tier,
-                String imageUrl) {
-        this.id = id;
-        this.name = name;
+    public Hero(Long idHero, String namaHero, String role,
+                String counter, String sinergi, String gambar) {
+        this.idHero = idHero;
+        this.namaHero = namaHero;
         this.role = role;
-        this.tier = tier;
-        this.imageUrl = imageUrl;
+        this.counter = counter;
+        this.sinergi = sinergi;
+        this.gambar = gambar;
     }
 
-    // GETTER & SETTER
+    // GETTER & SETTER (Encapsulation)
 
-    public Long getId() {
-        return id;
+    public Long getIdHero() {
+        return idHero;
     }
-    public void setId(Long id) {
-        this.id = id;
+    public void setIdHero(Long idHero) {
+        this.idHero = idHero;
     }
 
-    public String getName() {
-        return name;
+    public String getNamaHero() {
+        return namaHero;
     }
-    public void setName(String name) {
-        this.name = name;
+    public void setNamaHero(String namaHero) {
+        this.namaHero = namaHero;
     }
 
     public String getRole() {
@@ -45,33 +63,33 @@ public class Hero {
         this.role = role;
     }
 
-    public String getTier() {
-        return tier;
+    public String getCounter() {
+        return counter;
     }
-    public void setTier(String tier) {
-        if (tier != null && tier.matches("[SABCsabc]")) {
-            this.tier = tier.toUpperCase();
-        } else {
-            throw new IllegalArgumentException("Tier tidak valid: " + tier);
-        }
+    public void setCounter(String counter) {
+        this.counter = counter;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getSinergi() {
+        return sinergi;
     }
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setSinergi(String sinergi) {
+        this.sinergi = sinergi;
     }
 
+    public String getGambar() {
+        return gambar;
+    }
+    public void setGambar(String gambar) {
+        this.gambar = gambar;
+    }
 
-    // toString() untuk debugging
     @Override
     public String toString() {
         return "Hero{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
+                "idHero=" + idHero +
+                ", namaHero='" + namaHero + '\'' +
                 ", role='" + role + '\'' +
-                ", tier='" + tier + '\'' +
                 '}';
     }
 }
