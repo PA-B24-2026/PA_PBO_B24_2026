@@ -99,6 +99,8 @@ cd PA_PBO_B24_2026
 3. Kemudian klik tombol run seperti biasanya.
 4. Selamat! Programnya telah berhasil dijalankan
 
+---
+
 ## Cara Menjalankan Aplikasi
 1. Buka folder projek
 2. Pilih file TierListApplication kemudian jalankan file ini
