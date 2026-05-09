@@ -24,9 +24,20 @@ public class HeroController {
     }
 
     @PostMapping("/hero/save")
-    public String save(@ModelAttribute Hero hero, RedirectAttributes ra) {
+    public String save(@ModelAttribute Hero hero,
+                       @RequestParam(value = "roleList", required = false) List<String> roleList,
+                       RedirectAttributes ra) {
+
+        if (roleList != null && !roleList.isEmpty()) {
+            // Menggabungkan List menjadi String: "Assassin, Marksman"
+            String rolesCombined = String.join(", ", roleList);
+            hero.setRole(rolesCombined);
+        } else {
+            hero.setRole("No Role");
+        }
+
         heroService.saveHero(hero);
-        ra.addFlashAttribute("pesan", "Hero " + hero.getNamaHero() + " berhasil disimpan!");
+        ra.addFlashAttribute("pesan", "Hero berhasil disimpan dengan role: " + hero.getRole());
         ra.addFlashAttribute("tipe", "success");
         return "redirect:/";
     }
