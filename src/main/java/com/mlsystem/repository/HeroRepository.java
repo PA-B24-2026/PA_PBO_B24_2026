@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository // Menandakan bahwa ini adalah komponen pengakses database
 public interface HeroRepository extends JpaRepository<Hero, Long> {
+//    Secara otomatis punya fungsi save(), findAll(), dll.
 }
