@@ -5,10 +5,9 @@ import java.util.List;
 
 // Ini import dari file kita
 import com.mlsystem.model.Hero;
-import com.mlsystem.service.HeroService;
+import com.mlsystem.service.HeroServices;
 
 // Ini import ORG
-import org.apache.catalina.Store;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,7 +20,7 @@ public class HeroController {
 
 //  Depedency Injection: Menyambungkan controller sama service hero secara otomatis
     @Autowired
-    private HeroService heroService;
+    private HeroServices heroService;
 
 //  Handle request pas pertama kali menuju localhost:8080
     @GetMapping("/")
