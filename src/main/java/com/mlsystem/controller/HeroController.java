@@ -4,10 +4,7 @@ package com.mlsystem.controller;
 import java.util.List;
 
 // Ini import dari file kita
-import com.mlsystem.model.Hero;
-import com.mlsystem.model.TierList;
-import com.mlsystem.model.CasualTierList;
-import com.mlsystem.model.CompetitiveTierList;
+import com.mlsystem.model.*;
 
 // Import INTERFACE, bukan class murni
 import com.mlsystem.service.HeroService;
@@ -23,20 +20,30 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class HeroController {
 
-//  Depedency Injection: Menyambungkan controller sama service hero secara otomatis
+    //  Depedency Injection: Menyambungkan controller sama service hero secara otomatis
     @Autowired
     private HeroService heroService;
 
-//  Handle request pas pertama kali menuju localhost:8080
+    //  Handle request pas pertama kali menuju localhost:8080
     @GetMapping("/")
     public String index(Model model) {
 //      Ambil semua data hero dari db via service baru dimasukan ke variabel listHero
-        model.addAttribute("listHero", heroService.getAllHeroes());
+        model.addAttribute("heroes", heroService.getAllHeroes());
+        // Mengambil data semua tier list yang tersimpan di database baru
+        model.addAttribute("tiers", heroService.getAllTiers());
 //      Membuka file index.html secara otomatis
         return "index";
     }
 
-//  Handle request pas user tekan tombol simpan pada form (POST)
+    // Tombol di UI untuk memicu sinkronisasi API eksternal (OpenMLBB)
+    @GetMapping("/sync")
+    public String sync() {
+        // Memanggil fungsi sinkronisasi dari service implementation
+        heroService.syncFromApi();
+        return "redirect:/";
+    }
+
+    //  Handle request pas user tekan tombol simpan pada form (POST)
     @PostMapping("/hero/save")
     public String save(@ModelAttribute Hero hero,
                        @RequestParam(value = "roleList", required = false) List<String> roleList,
@@ -92,9 +99,11 @@ public class HeroController {
     // Menghapus data master hero dari pool bahan sandbox
     @GetMapping("/hero/delete/{id}")
     public String delete(@PathVariable Long id, RedirectAttributes ra) {
+//      Hapus hero dari database melalui service
         heroService.deleteHeroById(id);
         ra.addFlashAttribute("pesan", "Data master hero dicabut dari sistem.");
         ra.addFlashAttribute("tipe", "info");
+//      Kembali ke halaman utama setelah hapus
         return "redirect:/";
     }
 }

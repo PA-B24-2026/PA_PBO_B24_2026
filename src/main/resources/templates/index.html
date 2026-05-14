@@ -2,89 +2,255 @@
 <html xmlns:th="http://www.thymeleaf.org" data-theme="night">
 <head>
     <meta charset="UTF-8">
-    <title>ML Tier List</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLBB Tier List Generator</title>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.10.2/dist/full.min.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Efek visual saat item hero sedang ditarik/drag */
+        .dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+        }
+    </style>
 </head>
-<body class="p-10">
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased">
 
-<div class="flex justify-between items-center mb-8">
-    <h1 class="text-3xl font-bold">ML Hero Tier List</h1>
-    <!-- Tombol Buka Modal -->
-    <button class="btn btn-primary" onclick="modal_tambah.showModal()">+ Tambah Hero</button>
-</div>
+<div class="max-w-7xl mx-auto px-4 py-8">
 
-<!-- Grid Kartu Hero -->
-<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-    <div th:each="h : ${listHero}" class="card bg-base-200 shadow-xl border border-slate-700">
-        <div class="card-body">
-            <h2 class="card-title text-blue-400" th:text="${h.namaHero}">Nama</h2>
-            <div class="badge badge-secondary" th:text="${h.role}">Role</div>
-            <p class="text-xs mt-2">Counter: <span th:text="${h.counter}">-</span></p>
-            <div class="card-actions justify-end mt-4">
-                <a th:href="@{'/hero/delete/' + ${h.idHero}}" class="btn btn-error btn-xs">Hapus</a>
-            </div>
+    <header class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8 border-b border-slate-800 pb-6">
+        <div>
+            <h1 class="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent">
+                MLBB TIER LIST MAKER
+            </h1>
+            <p class="text-sm text-slate-400 mt-1">Geser hero ke baris tier pilihanmu dan bekukan hasilnya ke database.</p>
         </div>
-    </div>
+
+        <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+            <a th:href="@{/sync}" class="btn btn-outline btn-warning btn-sm gap-2 norm-case">
+                <i class="fa-solid fa-rotate"></i> Sync API Mobile Legends
+            </a>
+            <button class="btn btn-primary btn-sm gap-2 norm-case" onclick="modal_tambah.showModal()">
+                <i class="fa-solid fa-plus"></i> Hero Baru
+            </button>
+        </div>
+    </header>
+
+    <section class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl mb-8">
+
+        <div class="flex border-b border-slate-950 min-h-[90px]">
+            <div class="w-24 bg-red-500 text-black font-black flex items-center justify-center text-xl shrink-0 select-none">S</div>
+            <div class="tier-row flex flex-wrap gap-2 p-2 items-center flex-grow bg-slate-900/40" data-tier="S" ondragover="allowDrop(event)" ondrop="drop(event)"></div>
+        </div>
+
+        <div class="flex border-b border-slate-950 min-h-[90px]">
+            <div class="w-24 bg-orange-400 text-black font-black flex items-center justify-center text-xl shrink-0 select-none">A</div>
+            <div class="tier-row flex flex-wrap gap-2 p-2 items-center flex-grow bg-slate-900/40" data-tier="A" ondragover="allowDrop(event)" ondrop="drop(event)"></div>
+        </div>
+
+        <div class="flex border-b border-slate-950 min-h-[90px]">
+            <div class="w-24 bg-yellow-400 text-black font-black flex items-center justify-center text-xl shrink-0 select-none">B</div>
+            <div class="tier-row flex flex-wrap gap-2 p-2 items-center flex-grow bg-slate-900/40" data-tier="B" ondragover="allowDrop(event)" ondrop="drop(event)"></div>
+        </div>
+
+        <div class="flex border-b border-slate-950 min-h-[90px]">
+            <div class="w-24 bg-green-400 text-black font-black flex items-center justify-center text-xl shrink-0 select-none">C</div>
+            <div class="tier-row flex flex-wrap gap-2 p-2 items-center flex-grow bg-slate-900/40" data-tier="C" ondragover="allowDrop(event)" ondrop="drop(event)"></div>
+        </div>
+
+        <div class="flex border-b border-slate-950 min-h-[90px]">
+            <div class="w-24 bg-blue-400 text-black font-black flex items-center justify-center text-xl shrink-0 select-none">D</div>
+            <div class="tier-row flex flex-wrap gap-2 p-2 items-center flex-grow bg-slate-900/40" data-tier="D" ondragover="allowDrop(event)" ondrop="drop(event)"></div>
+        </div>
+
+        <div class="flex min-h-[90px]">
+            <div class="w-24 bg-purple-500 text-black font-black flex items-center justify-center text-xl shrink-0 select-none">F</div>
+            <div class="tier-row flex flex-wrap gap-2 p-2 items-center flex-grow bg-slate-900/40" data-tier="F" ondragover="allowDrop(event)" ondrop="drop(event)"></div>
+        </div>
+    </section>
+
+    <section class="bg-slate-900 p-5 border border-slate-800 rounded-xl mb-8 flex flex-col md:flex-row items-end gap-4 shadow-lg">
+        <form id="formTierList" th:action="@{/tierlist/save}" method="POST" class="w-full flex flex-col md:flex-row items-end gap-4">
+
+            <input type="hidden" id="susunanHeroInput" name="susunanHero" required>
+
+            <div class="form-control w-full md:w-1/3">
+                <label class="label py-1"><span class="label-text text-xs text-slate-400 font-bold">NAMA TIER LIST</span></label>
+                <input type="text" name="namaTierList" placeholder="Contoh: Tier List M7 Tournament" class="input input-sm input-bordered bg-slate-950 border-slate-700 w-full" required />
+            </div>
+
+            <div class="form-control w-full md:w-1/4">
+                <label class="label py-1"><span class="label-text text-xs text-slate-400 font-bold">JENIS TIER</span></label>
+                <select name="jenisTier" class="select select-sm select-bordered bg-slate-950 border-slate-700 w-full">
+                    <option value="serius">Competitive (Polymorphism Objek)</option>
+                    <option value="santai">Casual TierList</option>
+                </select>
+            </div>
+
+            <button type="button" onclick="prosesSimpanTierList()" class="btn btn-sm btn-success text-black font-bold norm-case w-full md:w-auto px-6">
+                <i class="fa-solid fa-floppy-disk"></i> Bekukan TierList ke DB
+            </button>
+        </form>
+    </section>
+
+    <section>
+        <h2 class="text-lg font-bold text-slate-400 mb-4 flex items-center gap-2 select-none">
+            <i class="fa-solid fa-box-open text-amber-500"></i> Hero Pool / Bahan Sandbox
+        </h2>
+
+        <div id="heroPoolZone" class="flex flex-wrap gap-3 p-4 bg-slate-900/60 border border-slate-800 border-dashed rounded-xl min-h-[150px]" ondragover="allowDrop(event)" ondrop="drop(event)">
+
+            <div th:each="h : ${heroes}"
+                 th:id="'hero-' + ${h.idHero}"
+                 th:data-nama="${h.namaHero}"
+                 draggable="true"
+                 ondragstart="drag(event)"
+                 ondragend="dragEnd(event)"
+                 class="hero-item card w-20 bg-slate-800 border border-slate-700 rounded-lg overflow-hidden cursor-grab active:cursor-grabbing shadow-sm hover:border-slate-500 transition-all select-none group relative">
+
+                <div class="w-full aspect-square bg-slate-950 flex items-center justify-center overflow-hidden pointer-events-none">
+                    <img th:if="${h.gambar != null}" th:src="${h.gambar}" alt="Img" class="w-full h-full object-cover" />
+                    <i th:if="${h.gambar == null}" class="fa-solid fa-user text-slate-600 text-lg"></i>
+                </div>
+
+                <div class="p-1 bg-slate-900 text-[9px] text-center font-medium truncate pointer-events-none" th:text="${h.namaHero}">Nama</div>
+
+                <button th:onclick="'konfirmasiHapus(\'' + @{'/hero/delete/' + ${h.idHero}} + '\')'"
+                        class="absolute top-0 right-0 btn btn-error btn-xs btn-circle scale-0 group-hover:scale-75 transition-transform duration-150 z-10 shadow-lg">
+                    ✕
+                </button>
+            </div>
+
+        </div>
+    </section>
 </div>
 
-<!-- Modal Form (DaisyUI) -->
-<dialog id="modal_tambah" class="modal">
-    <div class="modal-box bg-base-300">
-        <h3 class="font-bold text-lg mb-4">Form Input Hero</h3>
+<dialog id="modal_tambah" class="modal backdrop-blur-sm">
+    <div class="modal-box bg-slate-900 border border-slate-800 p-6 rounded-xl max-w-md">
+        <h3 class="font-bold text-lg mb-4 text-slate-200">Tambah Hero Manual</h3>
         <form th:action="@{/hero/save}" method="POST" class="space-y-4">
-            <input type="text" name="namaHero" placeholder="Nama Hero" class="input input-bordered w-full" required />
-
-<!--            Ini checkbox buat select role-->
             <div class="form-control">
-                <label class="label"><span class="label-text text-slate-300">Role Hero (Bisa pilih banyak)</span></label>
-                <div class="flex flex-wrap gap-4 bg-base-200 p-4 rounded-lg border border-slate-700">
-                    <label class="label cursor-pointer space-x-2">
-                        <input type="checkbox" name="roleList" value="Assassin" class="checkbox checkbox-primary" />
-                        <span class="label-text">Assassin</span>
-                    </label>
-                    <label class="label cursor-pointer space-x-2">
-                        <input type="checkbox" name="roleList" value="Marksman" class="checkbox checkbox-primary" />
-                        <span class="label-text">Marksman</span>
-                    </label>
-                    <label class="label cursor-pointer space-x-2">
-                        <input type="checkbox" name="roleList" value="Tank" class="checkbox checkbox-primary" />
-                        <span class="label-text">Tank</span>
-                    </label>
-                    <label class="label cursor-pointer space-x-2">
-                        <input type="checkbox" name="roleList" value="Mage" class="checkbox checkbox-primary" />
-                        <span class="label-text">Mage</span>
-                    </label>
-                    <label class="label cursor-pointer space-x-2">
-                        <input type="checkbox" name="roleList" value="Fighter" class="checkbox checkbox-primary" />
-                        <span class="label-text">Fighter</span>
-                    </label>
-                    <label class="label cursor-pointer space-x-2">
-                        <input type="checkbox" name="roleList" value="Support" class="checkbox checkbox-primary" />
-                        <span class="label-text">Support</span>
+                <label class="label"><span class="label-text text-slate-400 text-sm">Nama Hero</span></label>
+                <input type="text" name="namaHero" placeholder="Misal: Ling" class="input input-bordered bg-slate-950 border-slate-700 w-full" required />
+            </div>
+            <div class="form-control">
+                <label class="label"><span class="label-text text-slate-400 text-sm">Role (Pilih Multi)</span></label>
+                <div class="grid grid-cols-2 gap-2 bg-slate-950 p-3 rounded-lg border border-slate-800">
+                    <label th:each="r : ${#strings.arraySplit('Assassin,Marksman,Tank,Mage,Fighter,Support', ',')}" class="flex items-center gap-2 cursor-pointer p-1">
+                        <input type="checkbox" name="roleList" th:value="${r}" class="checkbox checkbox-xs checkbox-warning rounded" />
+                        <span class="label-text text-xs text-slate-300" th:text="${r}">Role</span>
                     </label>
                 </div>
             </div>
-
             <div class="modal-action">
-                <button type="submit" class="btn btn-success">Simpan</button>
-                <button type="button" class="btn" onclick="modal_tambah.close()">Batal</button>
+                <button type="button" class="btn btn-sm btn-ghost" onclick="modal_tambah.close()">Batal</button>
+                <button type="submit" class="btn btn-sm btn-primary">Simpan</button>
             </div>
         </form>
     </div>
 </dialog>
 
-<!-- Script SweetAlert2 (Telinga Notifikasi) -->
-<script th:if="${pesan}">
-    Swal.fire({
-        title: 'Notifikasi',
-        text: "[[${pesan}]]",
-        icon: "[[${tipe}]]",
-        background: '#1d232a',
-        color: '#a6adbb'
-    });
-</script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
 
+    // 1. FUNGSI DRAG & DROP UTAMA
+    function allowDrop(ev) {
+        ev.preventDefault(); // Mengizinkan drop item ke zona ini
+    }
+
+    function drag(ev) {
+        ev.target.classList.add('dragging');
+        ev.dataTransfer.setData("text", ev.target.id); // Menyimpan ID element yang sedang ditarik
+    }
+
+    function dragEnd(ev) {
+        ev.target.classList.remove('dragging');
+    }
+
+    function drop(ev) {
+        ev.preventDefault();
+        const dataId = ev.dataTransfer.getData("text");
+        const draggedElement = document.getElementById(dataId);
+
+        // Mencari target drop (bisa baris tier list atau kolam hero pool utama)
+        let targetZone = ev.target;
+        while (!targetZone.classList.contains('tier-row') && targetZone.id !== 'heroPoolZone') {
+            targetZone = targetZone.parentElement;
+            if (!targetZone) return;
+        }
+
+        targetZone.appendChild(draggedElement); // Memindahkan element hero fisik ke zona baru
+    }
+
+    // 2. SERIALISASI DATA SEBELUM FORM SUBMIT
+    function prosesSimpanTierList() {
+        let hasilSusunan = {};
+        const barisTierList = document.querySelectorAll('.tier-row');
+
+        // Looping mengambil data setiap baris S, A, B, C, D, F
+        barisTierList.forEach(row => {
+            const namaTier = row.getAttribute('data-tier');
+            const heroKarakter = row.querySelectorAll('.hero-item');
+            let listNamaHero = [];
+
+            heroKarakter.forEach(hero => {
+                listNamaHero.push(hero.getAttribute('data-nama'));
+            });
+
+            // Masukkan jika tier ada isinya, misal: S: ["Chou", "Kaja"]
+            if(listNamaHero.length > 0){
+                hasilSusunan[namaTier] = listNamaHero;
+            }
+        });
+
+        // Ubah object hasil susunan menjadi JSON String
+        // Hasil jadinya nanti: {"S":["Chou","Kaja"],"A":["Tigreal"]}
+        const jsonString = JSON.stringify(hasilSusunan);
+
+        if (Object.keys(hasilSusunan).length === 0) {
+            Swal.fire('Oops!', 'Susun minimal 1 hero ke dalam papan tier list sebelum disimpan!', 'warning');
+            return;
+        }
+
+        // Masukkan ke input hidden di dalam form, baru di-submit otomatis ke Controller
+        document.getElementById('susunanHeroInput').value = jsonString;
+        document.getElementById('formTierList').submit();
+    }
+
+    // 3. SWEETALERT HANDLING FROM CONTROLLER FLASH ATTRIBUTE
+    const pesan = [[${pesan}]];
+    const tipe = [[${tipe}]];
+    if (pesan) {
+        Swal.fire({
+            title: tipe === 'success' ? 'Berhasil!' : 'Info',
+            text: pesan,
+            icon: tipe,
+            background: '#111827',
+            color: '#f3f4f6',
+            confirmButtonColor: '#eab308'
+        });
+    }
+
+    // 4. KONFIRMASI HAPUS DATA HERO MASTER
+    function konfirmasiHapus(deleteUrl) {
+        Swal.fire({
+            title: 'Hapus Master Hero?',
+            text: "Hero akan dihapus total dari database sistem!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#4b5563',
+            confirmButtonText: 'Ya, Hapus!',
+            background: '#111827',
+            color: '#f3f4f6'
+        }).then((result) => {
+            if (result.isConfirmed) window.location.href = deleteUrl;
+        });
+    }
+    /*]]>*/
+</script>
 </body>
 </html>

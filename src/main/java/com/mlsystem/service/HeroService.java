@@ -4,17 +4,18 @@ import com.mlsystem.model.Hero;
 import com.mlsystem.model.TierList;
 import java.util.List;
 
-// LAYER KONTRAK INTERFACE: Menentukan standar operasional tanpa menulis logika teknisnya
 public interface HeroService {
-
-    // Kontrak fungsi manajemen master hero
+    // Method untuk Hero
     List<Hero> getAllHeroes();
     void saveHero(Hero hero);
     Hero getHeroById(Long id);
     void deleteHeroById(Long id);
-    void ambilDataHeroDariApiLuar(); // Pengambilan data external API sesuai revisi
 
-    // Kontrak fungsi manajemen hasil kreasi sandbox Tier Maker global
-    List<TierList> getAllTierLists();
+    // Method untuk Tier List (Disamakan dengan kebutuhan Controller)
+    List<TierList> getAllTiers();
+    void saveTier(TierList tier);
     void saveTierList(TierList tierList);
+
+    // Method Sync API
+    void syncFromApi();
 }
