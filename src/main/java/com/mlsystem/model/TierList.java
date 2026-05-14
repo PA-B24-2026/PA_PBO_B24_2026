@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "jenis_tierlist", discriminatorType = DiscriminatorType.STRING)
 @Table(name = "tb_tierlist")
-public class TierList {
+public abstract class TierList {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
