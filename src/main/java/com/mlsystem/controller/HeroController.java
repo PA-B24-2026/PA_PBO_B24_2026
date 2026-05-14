@@ -5,7 +5,12 @@ import java.util.List;
 
 // Ini import dari file kita
 import com.mlsystem.model.Hero;
-import com.mlsystem.service.HeroServices;
+import com.mlsystem.model.TierList;
+import com.mlsystem.model.CasualTierList;
+import com.mlsystem.model.CompetitiveTierList;
+
+// Import INTERFACE, bukan class murni
+import com.mlsystem.service.HeroService;
 
 // Ini import ORG
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +25,7 @@ public class HeroController {
 
 //  Depedency Injection: Menyambungkan controller sama service hero secara otomatis
     @Autowired
-    private HeroServices heroService;
+    private HeroService heroService;
 
 //  Handle request pas pertama kali menuju localhost:8080
     @GetMapping("/")
@@ -58,11 +63,37 @@ public class HeroController {
         return "redirect:/";
     }
 
-//  Handle request untuk hapus data by id yang ada di URL (Misal: /hero/delete/5)
+    // Memproses penyimpanan hasil kreasi susunan sandox TierMaker dari user
+    @PostMapping("/tierlist/save")
+    public String saveTierList(@RequestParam("namaTierList") String nama,
+                               @RequestParam("susunanHero") String susunan,
+                               @RequestParam("jenisTier") String jenis,
+                               RedirectAttributes ra) {
+
+        // POLYMORFISME: Penentuan objek anak murni dilakukan saat aplikasi berjalan (Runtime)
+        TierList kustomUser;
+        if (jenis.equalsIgnoreCase("serius")) {
+            kustomUser = new CompetitiveTierList();
+        } else {
+            kustomUser = new CasualTierList();
+        }
+
+        kustomUser.setNamaTierList(nama);
+        kustomUser.setSusunanHero(susunan);
+
+        // Menembus layer kontrak service untuk menyimpan hasil kreasi referensi user
+        heroService.saveTierList(kustomUser);
+
+        ra.addFlashAttribute("pesan", "Referensi kustom TierList berhasil dibekukan ke database!");
+        ra.addFlashAttribute("tipe", "success");
+        return "redirect:/";
+    }
+
+    // Menghapus data master hero dari pool bahan sandbox
     @GetMapping("/hero/delete/{id}")
     public String delete(@PathVariable Long id, RedirectAttributes ra) {
         heroService.deleteHeroById(id);
-        ra.addFlashAttribute("pesan", "Data berhasil dihapus!");
+        ra.addFlashAttribute("pesan", "Data master hero dicabut dari sistem.");
         ra.addFlashAttribute("tipe", "info");
         return "redirect:/";
     }
