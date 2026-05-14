@@ -2,7 +2,11 @@ package com.mlsystem.model;
 
 import jakarta.persistence.*;
 
+// ABSTRAKSI: Menandakan class ini sebagai Abstract Class (konsep Tier List tanpa multi-user)
 @Entity
+// Mapping inheritance kedalam satu tabel tunggal di DB
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "jenis_tierlist", discriminatorType = DiscriminatorType.STRING)
 @Table(name = "tb_tierlist")
 public class TierList {
 
@@ -11,76 +15,25 @@ public class TierList {
     @Column(name = "id_tier")
     private Long idTier;
 
-    @Column(name = "lane")
-    private String lane; // EXP, GOLD, MID, JUNGLE, ROAM
+    @Column(name = "nama_tierlist")
+    private String namaTierList; // Isinya referensi dari user kayak Tier Jungle S31
 
-    @Column(name = "grade_tier")
-    private String gradeTier; // S, A, B, C
-
-    // Relasi Many-to-One ke tb_hero
-    @ManyToOne
-    @JoinColumn(name = "id_hero")
-    private Hero hero;
+    @Lob
+    @Column(name = "susunan_hero", columnDefinition = "TEXT")
+    private String susunanHero; // Menyimpan teks data susunan hero contoh S:Fanny,Pernan|A:Freya
 
     // CONSTRUCTOR KOSONG
     public TierList() {}
 
-    // CONSTRUCTOR LENGKAP
-    public TierList(Long idTier, Hero hero, String lane, String gradeTier) {
-        this.idTier = idTier;
-        this.hero = hero;
-        this.lane = lane;
-        setGradeTier(gradeTier); // pakai setter agar validasi berjalan
-    }
+    // POLYMORFISME: Method abstract yang wajib di override secara berbeda oleh child class
+    public abstract String getTemaWarnaKanvas
+    // GETTER & SETTER MANUAL
+    public Long getIdTier() { return idTier; }
+    public void setIdTier(Long idTier) { this.idTier = idTier; }
 
-    // GETTER & SETTER (Encapsulation)
+    public String getNamaTierList() { return namaTierList; }
+    public void setNamaTierList(String namaTierList) { this.namaTierList = namaTierList; }
 
-    public Long getIdTier() {
-        return idTier;
-    }
-    public void setIdTier(Long idTier) {
-        this.idTier = idTier;
-    }
-
-    public Hero getHero() {
-        return hero;
-    }
-    public void setHero(Hero hero) {
-        this.hero = hero;
-    }
-
-    public String getLane() {
-        return lane;
-    }
-    public void setLane(String lane) {
-        // Validasi disesuaikan dengan data dari VB.NET / Database
-        if (lane != null && lane.matches("(?i)ExpLane|GoldLane|MidLane|Jungle|Roam")) {
-            // (?i) membuat validasi tidak mempedulikan huruf besar/kecil (case-insensitive)
-            this.lane = lane;
-        } else {
-            throw new IllegalArgumentException("Lane tidak valid: " + lane);
-        }
-    }
-
-    public String getGradeTier() {
-        return gradeTier;
-    }
-    public void setGradeTier(String gradeTier) {
-        // Validasi grade hanya boleh S, A, B, atau C
-        if (gradeTier != null && gradeTier.matches("[SABCsabc]")) {
-            this.gradeTier = gradeTier.toUpperCase();
-        } else {
-            throw new IllegalArgumentException("Grade tier tidak valid: " + gradeTier);
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "TierList{" +
-                "idTier=" + idTier +
-                ", hero=" + (hero != null ? hero.getNamaHero() : "null") +
-                ", lane='" + lane + '\'' +
-                ", gradeTier='" + gradeTier + '\'' +
-                '}';
-    }
+    public String getSusunanHero() { return susunanHero; }
+    public void setSusunanHero(String susunanHero) { this.susunanHero = susunanHero; }
 }

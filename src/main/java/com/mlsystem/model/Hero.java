@@ -2,6 +2,7 @@ package com.mlsystem.model;
 
 import jakarta.persistence.*;
 
+// Menandakan kelas ini sebagai entitas DB untuk data hero
 @Entity
 @Table(name = "tb_hero")
 public class Hero {
@@ -26,10 +27,11 @@ public class Hero {
     @Column(name = "gambar")
     private String gambar; // misal: "/assets/heroes/chou.png"
 
-    // CONSTRUCTOR KOSONG
+    // CONSTRUCTOR KOSONG Wajib buat si JPA Hibernate
+    // Mengubah objek Java menjadi baris tabel database (ORM - Object Relational Mapping)
     public Hero() {}
 
-    // CONSTRUCTOR LENGKAP
+    // CONSTRUCTOR LENGKAP Biar mudah kita handle
     public Hero(Long idHero, String namaHero, String role,
                 String counter, String sinergi, String gambar) {
         this.idHero = idHero;
