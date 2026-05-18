@@ -72,7 +72,8 @@ public class HeroController {
 
     // Memproses penyimpanan hasil kreasi susunan sandox TierMaker dari user
     @PostMapping("/tierlist/save")
-    public String saveTierList(@RequestParam("namaTierList") String nama,
+    public String saveTierList(@RequestParam(value = "idTier", required = false) Long idTier,
+                               @RequestParam("namaTierList") String nama,
                                @RequestParam("susunanHero") String susunan,
                                @RequestParam("jenisTier") String jenis,
                                RedirectAttributes ra) {
@@ -83,6 +84,11 @@ public class HeroController {
             kustomUser = new CompetitiveTierList();
         } else {
             kustomUser = new CasualTierList();
+        }
+
+        // Jika ada ID tierlist maka dia akan ambil lalu update
+        if (idTier != null) {
+            kustomUser.setIdTier(idTier);
         }
 
         kustomUser.setNamaTierList(nama);
@@ -106,4 +112,6 @@ public class HeroController {
 //      Kembali ke halaman utama setelah hapus
         return "redirect:/";
     }
+
+
 }
