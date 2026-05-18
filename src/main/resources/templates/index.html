@@ -29,10 +29,13 @@
             <p class="text-sm text-slate-400 mt-1">Geser hero ke baris tier pilihanmu dan bekukan hasilnya ke database.</p>
         </div>
 
-        <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+        <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
             <a th:href="@{/sync}" class="btn btn-outline btn-warning btn-sm gap-2 norm-case">
-                <i class="fa-solid fa-rotate"></i> Sync API Mobile Legends
+                <i class="fa-solid fa-rotate"></i> Sync API
             </a>
+            <button class="btn btn-outline btn-accent btn-sm gap-2 norm-case" onclick="modal_load.showModal()">
+                <i class="fa-solid fa-folder-open"></i> Buka Tierlist
+            </button>
             <button class="btn btn-primary btn-sm gap-2 norm-case" onclick="modal_tambah.showModal()">
                 <i class="fa-solid fa-plus"></i> Hero Baru
             </button>
@@ -128,50 +131,51 @@
     </section>
 </div>
 
-<section class="max-w-7xl mx-auto px-4 mt-4 mb-12">
-    <h2 class="text-xl font-bold text-slate-400 mb-4 flex items-center gap-2 select-none">
-        <i class="fa-solid fa-folder-open text-yellow-500"></i> Tier List Tersimpan di Database
-    </h2>
+<dialog id="modal_load" class="modal backdrop-blur-sm">
+    <div class="modal-box bg-slate-900 border border-slate-800 p-6 rounded-xl max-w-2xl h-[500px] flex flex-col">
+        <h3 class="font-bold text-lg mb-4 text-slate-200 flex items-center gap-2">
+            <i class="fa-solid fa-folder-open text-yellow-500"></i> Pilih Referensi Penyimpanan Tier List
+        </h3>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div th:each="tier : ${tiers}"
-             th:classappend="${tier.getTemaWarnaKanvas()}"
-             class="p-5 border rounded-2xl shadow-xl transition-all flex flex-col justify-between">
-
-            <div>
-                <div class="flex justify-between items-center mb-3 border-b border-white/10 pb-2 gap-2">
-                    <h3 class="font-extrabold tracking-wide uppercase text-sm truncate max-w-[200px]"
-                        th:text="${#strings.isEmpty(tier.namaTierList) ? 'TIERLIST TANPA NAMA' : tier.namaTierList}">
-                        Nama Tier
-                    </h3>
-                    <div class="flex items-center gap-2 shrink-0">
-                        <span class="text-[10px] font-black px-2 py-0.5 rounded bg-black/40 tracking-wider uppercase text-slate-200"
-                              th:text="${tier.class.simpleName == 'CompetitiveTierList' ? 'Competitive' : 'Casual'}">
-                            Tipe Class
+        <div class="overflow-y-auto flex-grow space-y-3 pr-2">
+            <div th:each="tier : ${tiers}" class="bg-slate-950 border border-slate-800 p-4 rounded-xl flex items-center justify-between gap-4 hover:border-slate-700 transition-all">
+                <div class="flex-grow min-w-0">
+                    <div class="flex items-center gap-2 mb-1.5">
+                        <span th:text="${tier.class.simpleName == 'CompetitiveTierList' ? 'Competitive' : 'Casual'}"
+                              th:class="${tier.class.simpleName == 'CompetitiveTierList' ? 'badge badge-error badge-xs font-black p-2 text-[9px] tracking-wider uppercase text-white' : 'badge badge-info badge-xs font-black p-2 text-[9px] tracking-wider uppercase text-white'}">
+                            Jenis
                         </span>
-
-                        <button type="button"
-                                class="btn btn-xs btn-warning font-bold text-[10px] px-2 h-6 min-h-6 border-none text-black"
-                                th:data-nama="${tier.namaTierList}"
-                                th:data-jenis="${tier.class.simpleName == 'CompetitiveTierList' ? 'serius' : 'santai'}"
-                                th:data-susunan="${tier.susunanHero}"
-                                onclick="bukaDanAturPapan(this)">
-                            <i class="fa-solid fa-folder-open"></i> Buka & Atur
-                        </button>
+                        <h4 class="font-bold text-sm text-slate-200 truncate"
+                            th:text="${#strings.isEmpty(tier.namaTierList) ? 'TIERLIST TANPA NAMA' : tier.namaTierList}">
+                            Nama
+                        </h4>
                     </div>
+                    <p class="text-xs text-slate-400 truncate font-medium json-clean-preview" th:data-raw="${tier.susunanHero}">
+                        Memproses ringkasan susunan hero...
+                    </p>
                 </div>
 
-                <div class="bg-black/40 p-3 rounded-lg text-xs font-mono border border-black/20 overflow-x-auto text-slate-300">
-                    <code th:text="${tier.susunanHero}">{"S":["Chou"]}</code>
-                </div>
+                <button type="button"
+                        class="btn btn-sm btn-warning font-extrabold text-xs shrink-0 text-black px-4"
+                        th:data-nama="${tier.namaTierList}"
+                        th:data-jenis="${tier.class.simpleName == 'CompetitiveTierList' ? 'serius' : 'santai'}"
+                        th:data-susunan="${tier.susunanHero}"
+                        onclick="bukaDanAturPapan(this)">
+                    Muat
+                </button>
             </div>
 
-            <div class="text-[10px] mt-4 text-right opacity-60 font-medium text-slate-400">
-                ID Transaksi DB: <span th:text="${tier.idTier}">1</span>
+            <div th:if="${#lists.isEmpty(tiers)}" class="text-center py-12 text-slate-500 text-sm">
+                <i class="fa-solid fa-box-open text-3xl mb-2 block text-slate-700"></i>
+                Belum ada data tier list terbeku di database.
             </div>
         </div>
+
+        <div class="modal-action border-t border-slate-800 pt-3 mt-3">
+            <button type="button" class="btn btn-sm btn-ghost" onclick="modal_load.close()">Tutup</button>
+        </div>
     </div>
-</section>
+</dialog>
 
 <dialog id="modal_tambah" class="modal backdrop-blur-sm">
     <div class="modal-box bg-slate-900 border border-slate-800 p-6 rounded-xl max-w-md">
@@ -259,7 +263,7 @@
         document.getElementById('formTierList').submit();
     }
 
-    // 5. FUNGSI INTERAKTIF BARU: MEMBONGKAR JSON DB DAN MEMINDAHKAN OBJEK HERO KE PAPAN SANDBOX
+    // 5. FUNGSI LOAD DATA: MEMBONGKAR JSON DB DAN DISTRIBUSI ELEMENT HERO KE PAPAN
     function bukaDanAturPapan(btnElement) {
         const nama = btnElement.getAttribute('data-nama');
         const jenis = btnElement.getAttribute('data-jenis');
@@ -271,50 +275,70 @@
             const susunan = JSON.parse(susunanStr);
             const poolUtama = document.getElementById('heroPoolZone');
 
-            // Langkah A: Reset Papan (Kembalikan semua hero yang ada di baris S-F ke pool utama)
+            // Langkah A: Reset Papan (Kembalikan semua hero aktif ke pool utama)
             const semuaHeroAktif = document.querySelectorAll('.tier-row .hero-item');
             semuaHeroAktif.forEach(hero => {
                 poolUtama.appendChild(hero);
             });
 
-            // Langkah B: Sinkronkan Form Isian Atas otomatis
+            // Langkah B: Sinkronkan Form Isian atas
             document.querySelector('input[name="namaTierList"]').value = nama || '';
             document.querySelector('select[name="jenisTier"]').value = jenis;
 
-            // Langkah C: Pindahkan Element Hero Fisik ke Baris Tier S, A, B, C, D, F masing-masing
+            // Langkah C: Pindahkan Element Hero Fisik ke Baris Tier S-F
             Object.keys(susunan).forEach(keyTier => {
                 const barisTarget = document.querySelector(`.tier-row[data-tier="${keyTier}"]`);
                 if (barisTarget) {
-                    const listNamaHeroInTier = susunan[keyTier]; // Contoh: ["Chip", "Lukas"]
+                    const listNamaHeroInTier = susunan[keyTier];
 
                     listNamaHeroInTier.forEach(namaHero => {
-                        // Cari element HTML hero berdasarkan nama atributnya
                         const elementHero = document.querySelector(`.hero-item[data-nama="${namaHero}"]`);
                         if (elementHero) {
-                            barisTarget.appendChild(elementHero); // Tarik element fisik hero ke baris tier
+                            barisTarget.appendChild(elementHero);
                         }
                     });
                 }
             });
 
-            // Berikan SweetAlert feedback estetik ke user
+            // TUTUP MODAL SETELAH BERHASIL LOAD DATA
+            modal_load.close();
+
             Swal.fire({
                 title: 'Data Berhasil Dimuat!',
-                text: `Susunan untuk "${nama || 'Tanpa Nama'}" telah dikembalikan ke papan sandbox. Silakan atur kembali!`,
+                text: `Susunan untuk "${nama || 'Tanpa Nama'}" telah dikembalikan ke papan sandbox.`,
                 icon: 'success',
                 background: '#111827',
                 color: '#f3f4f6',
                 confirmButtonColor: '#eab308'
             });
 
-            // Scroll otomatis layar ke arah papan sandbox teratas agar user langsung bisa edit
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
         } catch (e) {
-            console.error("Gagal memparsing JSON susunan hero: ", e);
+            console.error(e);
             Swal.fire('Error!', 'Data JSON susunan hero korup atau tidak valid.', 'error');
         }
     }
+
+    // FUNGSI OTOMATIS: MENGUBAH JSON MENJADI TEKS RINGKASAN INDAH SAAT DIALOD
+    document.addEventListener("DOMContentLoaded", function() {
+        const previews = document.querySelectorAll('.json-clean-preview');
+        previews.forEach(p => {
+            const rawJson = p.getAttribute('data-raw');
+            if (rawJson) {
+                try {
+                    const obj = JSON.parse(rawJson);
+                    let textSummary = [];
+                    Object.keys(obj).forEach(tier => {
+                        textSummary.push(`${tier}: ${obj[tier].join(', ')}`);
+                    });
+                    p.textContent = textSummary.join(' | ');
+                } catch (e) {
+                    p.textContent = "Format data susunan tidak terbaca.";
+                }
+            }
+        });
+    });
 
     // 3. SWEETALERT HANDLING FROM CONTROLLER FLASH ATTRIBUTE
     const pesan = [[${pesan}]];
