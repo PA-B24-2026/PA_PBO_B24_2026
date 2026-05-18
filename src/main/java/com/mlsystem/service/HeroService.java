@@ -15,6 +15,7 @@ public interface HeroService {
     List<TierList> getAllTiers();
     void saveTier(TierList tier);
     void saveTierList(TierList tierList);
+    void deleteTierListById(Long id);
 
     // Method Sync API
     void syncFromApi();

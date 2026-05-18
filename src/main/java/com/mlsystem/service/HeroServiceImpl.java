@@ -23,6 +23,11 @@ public class HeroServiceImpl implements HeroService {
     public void saveTier(TierList tier) { tierRepo.save(tier); }
 
     @Override
+    public void deleteTierListById(Long id) {
+        tierRepo.deleteById(id);
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public void syncFromApi() {
         System.out.println("=============================================");

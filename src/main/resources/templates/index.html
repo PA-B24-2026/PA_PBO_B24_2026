@@ -90,7 +90,7 @@
                 <label class="label py-1"><span class="label-text text-xs text-slate-400 font-bold">JENIS TIER</span></label>
                 <select name="jenisTier" class="select select-sm select-bordered bg-slate-950 border-slate-700 w-full">
                     <option value="serius">Competitive</option>
-                    <option value="santai">Casual TierList</option>
+                    <option value="santai">Casual</option>
                 </select>
             </div>
 
@@ -167,6 +167,11 @@
                         th:data-susunan="${tier.susunanHero}"
                         onclick="bukaDanAturPapan(this)">
                     Muat
+                </button>
+                <button type="button"
+                        class="btn btn-sm btn-error btn-square text-white"
+                        th:onclick="'konfirmasiHapusTierList(\'' + @{'/tierlist/delete/' + ${tier.idTier}} + '\')'">
+                    <i class="fa-solid fa-trash"></i>
                 </button>
             </div>
 
@@ -400,6 +405,26 @@
             color: '#f3f4f6'
         }).then((result) => {
             if (result.isConfirmed) window.location.href = deleteUrl;
+        });
+    }
+
+    // FUNGSI KONFIRMASI SWEETALERT UNTUK HAPUS REFERENSI TIERLIST
+    function konfirmasiHapusTierList(deleteUrl) {
+        Swal.fire({
+            target: document.getElementById('modal_load'),
+            title: 'Hapus Tier List?',
+            text: "Susunan kreasi tier list ini akan dilenyapkan secara permanen dari database!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#4b5563',
+            confirmButtonText: 'Ya, Hapus!',
+            background: '#111827',
+            color: '#f3f4f6'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = deleteUrl;
+            }
         });
     }
     /*]]>*/

@@ -28,6 +28,12 @@ public abstract class TierList {
     // POLYMORFISME: Method abstract yang wajib di override secara berbeda oleh child class
     public abstract String getTemaWarnaKanvas();
 
+    // POLYMORFISME untuk tierlist
+    // Ngembalikan nilai serius or santai
+    public abstract String getJenisKey();
+    // Ngembalikan nilai compe atau serius
+    public abstract String getJenisName();
+
     // GETTER & SETTER MANUAL
     public Long getIdTier() { return idTier; }
     public void setIdTier(Long idTier) { this.idTier = idTier; }

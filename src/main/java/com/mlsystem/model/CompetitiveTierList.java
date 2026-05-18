@@ -13,4 +13,14 @@ public class CompetitiveTierList extends TierList {
     public String getTemaWarnaKanvas() {
         return "bg-red-950 border-red-500 text-red-200";
     }
+
+    @Override
+    public String getJenisKey(){
+        return "serius";
+    }
+
+    @Override
+    public String getJenisName(){
+        return "Competitive";
+    }
 }

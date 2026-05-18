@@ -13,4 +13,14 @@ public class CasualTierList extends TierList {
     public String getTemaWarnaKanvas() {
         return "bg-blue-950 border-blue-500 text-blue-200";
     }
+
+    @Override
+    public String getJenisKey(){
+        return "serius";
+    }
+
+    @Override
+    public String getJenisName(){
+        return "Competitive";
+    }
 }

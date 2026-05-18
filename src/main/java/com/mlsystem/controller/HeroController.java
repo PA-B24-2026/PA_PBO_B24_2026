@@ -113,5 +113,19 @@ public class HeroController {
         return "redirect:/";
     }
 
+    // Menghapus data referensi kustom Tier List dari database
+    @GetMapping("/tierlist/delete/{id}")
+    public String deleteTierList(@PathVariable Long id, RedirectAttributes ra) {
+        try {
+            // GANTI BARIS YANG ERROR MENJADI SEPERTI INI:
+            heroService.deleteTierListById(id);
 
+            ra.addFlashAttribute("pesan", "Referensi Tier List berhasil dihapus permanen.");
+            ra.addFlashAttribute("tipe", "info");
+        } catch (Exception e) {
+            ra.addFlashAttribute("pesan", "Gagal menghapus: " + e.getMessage());
+            ra.addFlashAttribute("tipe", "error");
+        }
+        return "redirect:/";
+    }
 }
