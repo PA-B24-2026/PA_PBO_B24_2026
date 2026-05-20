@@ -33,11 +33,13 @@ public class HeroServiceImpl implements HeroService {
 
     @Override
     public void saveHero(Hero hero) {
+        // FIX: Mengirimkan 5 parameter sesuai cetak biru baru repository kita
         heroRepo.insertHeroManual(
                 hero.getNamaHero(),
                 hero.getRole(),
                 "MANUAL",
-                hero.getGambar()
+                "/images/default-hero.png", // Masuk ke kolom 'gambar' asli (cadangan)
+                hero.getGambarKustom()      // Masuk ke kolom 'gambar_kustom'
         );
     }
 
@@ -52,7 +54,6 @@ public class HeroServiceImpl implements HeroService {
         }
     }
 
-    // FIXED 1: Implementasi getHeroById menggunakan Query murni SQL manual
     @Override
     public Hero getHeroById(Long id) {
         return heroRepo.findHeroByIdManual(id);
@@ -68,7 +69,12 @@ public class HeroServiceImpl implements HeroService {
         heroRepo.updateGambarHeroManual(id, gambar);
     }
 
-    // FIXED 2: Fungsi Sync API diaktifkan kembali dan menggunakan query native manual
+    // FIX IMPLEMENTASI: Menambahkan override clearGambarKustom bawaan interface
+    @Override
+    public void clearGambarKustom(Long id) {
+        heroRepo.clearGambarKustomManual(id);
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public void syncFromApi() {
@@ -105,9 +111,9 @@ public class HeroServiceImpl implements HeroService {
                         String nama = (String) heroData.get("name");
                         String gambar = (String) heroData.get("head");
 
-                        // Memakai fungsi pengecekan duplikat dan insert manual murni
+                        // FIX ARGUMEN: Tambahkan , null di parameter ke-5 agar klop dengan query insertHeroManual baru
                         if (nama != null && heroRepo.findByNamaHeroManual(nama) == null) {
-                            heroRepo.insertHeroManual(nama, "Unset", "API", gambar);
+                            heroRepo.insertHeroManual(nama, "Unset", "API", gambar, null);
                         }
                     }
                 }

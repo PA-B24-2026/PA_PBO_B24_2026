@@ -35,20 +35,54 @@ public class HeroController {
 
     @PostMapping("/hero/save")
     public String save(@ModelAttribute Hero hero,
-                       @RequestParam(value = "roleList", required = false) List<String> roleList,
+                       @RequestParam("fileGambar") org.springframework.web.multipart.MultipartFile fileGambar,
                        RedirectAttributes ra) {
         try {
-            if (roleList != null && !roleList.isEmpty()) {
-                hero.setRole(String.join(", ", roleList));
-            } else {
-                hero.setRole("No Role");
+            hero.setRole("Unset");
+
+            if (fileGambar != null && !fileGambar.isEmpty()) {
+                String folderTujuan = new java.io.File("src/main/resources/static/uploads/").getAbsolutePath();
+                String namaFileUnik = System.currentTimeMillis() + "_" + fileGambar.getOriginalFilename();
+                java.io.File fileFisik = new java.io.File(folderTujuan + java.io.File.separator + namaFileUnik);
+
+                if (!fileFisik.getParentFile().exists()) fileFisik.getParentFile().mkdirs();
+                fileGambar.transferTo(fileFisik);
+
+                // SIMPAN KE KUSTOM PROPERTI
+                hero.setGambarKustom("/uploads/" + namaFileUnik);
             }
 
             heroService.saveHero(hero);
-            ra.addFlashAttribute("pesan", "Hero '" + hero.getNamaHero() + "' berhasil disimpan!");
+            ra.addFlashAttribute("pesan", "Hero manual berhasil terdaftar!");
             ra.addFlashAttribute("tipe", "success");
         } catch (Exception e) {
-            ra.addFlashAttribute("pesan", "Gagal menyimpan hero: " + e.getMessage());
+            ra.addFlashAttribute("pesan", "Gagal: " + e.getMessage());
+            ra.addFlashAttribute("tipe", "error");
+        }
+        return "redirect:/";
+    }
+
+    // ROUTE BARU: Menghapus gambar kustom secara fisik dan mengembalikan avatar ke link API asli
+    @GetMapping("/hero/clear-gambar/{id}")
+    public String clearGambarKustom(@PathVariable Long id, RedirectAttributes ra) {
+        try {
+            Hero hero = heroService.getHeroById(id);
+            if (hero != null) {
+                // Hapus berkas fisik di uploads jika ada kustomnya
+                String kustomPath = hero.getGambarKustom();
+                if (kustomPath != null && kustomPath.startsWith("/uploads/")) {
+                    String folderPath = new java.io.File("src/main/resources/static").getAbsolutePath();
+                    java.io.File fileFisik = new java.io.File(folderPath + kustomPath);
+                    if (fileFisik.exists()) fileFisik.delete();
+                }
+
+                // Set kolom gambar_kustom jadi NULL di database
+                heroService.clearGambarKustom(id);
+                ra.addFlashAttribute("pesan", "Gambar berhasil dikembalikan ke default bawaan API!");
+                ra.addFlashAttribute("tipe", "success");
+            }
+        } catch (Exception e) {
+            ra.addFlashAttribute("pesan", "Gagal mereset gambar: " + e.getMessage());
             ra.addFlashAttribute("tipe", "error");
         }
         return "redirect:/";
@@ -138,7 +172,7 @@ public class HeroController {
             if (hero != null && "MANUAL".equalsIgnoreCase(hero.getStatusHero())) {
 
                 // === LOGIKA PEMBERSIHAN FILE FISIK GAMBAR SAMPAH ===
-                String pathGambarLama = hero.getGambar();
+                String pathGambarLama = hero.getGambarKustom();
                 if (pathGambarLama != null && pathGambarLama.startsWith("/uploads/")) {
                     // Cari alamat absolute folder static/uploads di storage lokal
                     String folderPath = new java.io.File("src/main/resources/static").getAbsolutePath();

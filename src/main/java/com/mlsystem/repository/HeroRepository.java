@@ -25,23 +25,33 @@ public interface HeroRepository extends JpaRepository<Hero, Long> {
     Hero findHeroByIdManual(@Param("id") Long id);
 
     // 4. INSERT MANUAL HERO + STATUS ENUM DB (Urutan Kolom Sesuai Letak di Model: Status dulu baru Gambar)
+    // REVISI: Menambahkan kolom gambar_kustom ke dalam baris insert manual
     @Transactional
     @Modifying
-    @Query(value = "INSERT INTO tb_hero (nama_hero, role, status_hero, gambar) VALUES (:nama, :role, :status, :gambar)", nativeQuery = true)
+    @Query(value = "INSERT INTO tb_hero (nama_hero, role, status_hero, gambar, gambar_kustom) VALUES (:nama, :role, :status, :gambar, :gambarKustom)", nativeQuery = true)
     void insertHeroManual(@Param("nama") String nama,
                           @Param("role") String role,
                           @Param("status") String status,
-                          @Param("gambar") String gambar);
+                          @Param("gambar") String gambar,
+                          @Param("gambarKustom") String gambarKustom);
 
     // 5. UNTUK FITUR ALTERNATIF GANTI GAMBAR: Otomatis set status jadi MANUAL di tingkat DB
+    // REVISI: Mengubah target update ke kolom gambar_kustom agar link asli bawaan API tidak hilang/rusak
     @Transactional
     @Modifying
-    @Query(value = "UPDATE tb_hero SET gambar = :gambar, status_hero = 'MANUAL' WHERE id_hero = :id", nativeQuery = true)
-    void updateGambarHeroManual(@Param("id") Long id, @Param("gambar") String gambar);
+    @Query(value = "UPDATE tb_hero SET gambar_kustom = :gambarKustom WHERE id_hero = :id", nativeQuery = true)
+    void updateGambarHeroManual(@Param("id") Long id, @Param("gambarKustom") String gambarKustom);
 
     // 6. DELETE MASTER HERO MANUAL BY ID
     @Transactional
     @Modifying
     @Query(value = "DELETE FROM tb_hero WHERE id_hero = :id", nativeQuery = true)
     void deleteHeroManualById(@Param("id") Long id);
+
+    // 7. RESET GAMBAR KUSTOM (BALIK KE API)
+    // BARU: Digunakan saat tombol 'Kembali API' ditekan untuk mengeset gambar_kustom kembali jadi NULL
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE tb_hero SET gambar_kustom = NULL WHERE id_hero = :id", nativeQuery = true)
+    void clearGambarKustomManual(@Param("id") Long id);
 }

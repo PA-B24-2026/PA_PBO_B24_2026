@@ -131,13 +131,16 @@
                  class="hero-item card w-20 bg-slate-800 border border-slate-700 rounded-lg overflow-hidden cursor-grab active:cursor-grabbing shadow-sm hover:border-slate-500 transition-all select-none group relative">
 
                 <div class="w-full aspect-square bg-slate-950 flex items-center justify-center overflow-hidden relative">
-                    <img th:if="${h.gambar != null}" th:src="${h.gambar}" alt="Img" class="w-full h-full object-cover pointer-events-none" />
-                    <i th:if="${h.gambar == null}" class="fa-solid fa-user text-slate-600 text-lg pointer-events-none"></i>
+
+                    <img th:src="${h.gambarKustom != null ? h.gambarKustom : h.gambar}" alt="Img" class="w-full h-full object-cover pointer-events-none" />
 
                     <div class="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 flex flex-col gap-1 items-center justify-center transition-opacity p-1 z-10">
 
                         <button type="button" class="text-[9px] btn btn-neutral btn-xs p-1 h-auto min-h-0 w-full text-amber-400 font-bold tracking-tight uppercase"
-                                th:onclick="'bukaModalGantiGambar(' + ${h.idHero} + ')'">
+                                th:data-id="${h.idHero}"
+                                th:data-status="${h.statusHero}"
+                                th:data-is-kustom="${h.gambarKustom != null}"
+                                onclick="bukaModalGantiGambar(this)">
                             Ganti
                         </button>
 
@@ -147,7 +150,6 @@
                                 th:onclick="'konfirmasiHapus(\'' + @{'/hero/delete/' + ${h.idHero}} + '\')'">
                             Hapus
                         </button>
-
                     </div>
                 </div>
 
@@ -238,17 +240,25 @@
         <h3 class="font-bold text-md mb-3 text-slate-200 flex items-center gap-2">
             <i class="fa-solid fa-image text-amber-500"></i> Ganti Gambar Hero
         </h3>
+
         <form th:action="@{/hero/ganti-gambar}" method="POST" enctype="multipart/form-data" class="space-y-4">
             <input type="hidden" name="idHero" id="input_id_hero_ganti" />
 
             <div class="form-control">
                 <label class="label"><span class="label-text text-slate-400 text-xs">Pilih File Gambar Pengganti</span></label>
-                <input type="file" name="fileGambarAlternatif" accept="image/*" class="file-input file-input-bordered file-input-xs file-input-warning w-full bg-slate-950 font-sans text-xs" required />
+                <input type="file" name="fileGambarAlternatif" accept="image/*" class="file-input file-input-bordered file-input-xs file-input-warning w-full bg-slate-950 font-sans text-xs text-slate-300" required />
             </div>
 
-            <div class="modal-action border-t border-slate-800 pt-2 mt-2">
-                <button type="button" class="btn btn-xs btn-ghost" onclick="modal_ganti_gambar.close()">Batal</button>
-                <button type="submit" class="btn btn-xs btn-warning font-bold text-black">Upload & Terapkan</button>
+            <div class="flex flex-col gap-2 border-t border-slate-800 pt-3 mt-2">
+                <div class="flex justify-between items-center w-full">
+                    <button type="button" class="btn btn-xs btn-ghost text-slate-400 hover:text-slate-200" onclick="modal_ganti_gambar.close()">Batal</button>
+                    <button type="submit" class="btn btn-xs btn-warning font-bold text-black">Upload & Terapkan</button>
+                </div>
+
+                <button type="button" id="btn_reset_api" onclick="eksekusiResetApi()"
+                        class="btn btn-xs btn-outline btn-info w-full font-bold hidden mt-1">
+                    <i class="fa-solid fa-arrow-rotate-left text-[10px]"></i> Gunakan Gambar Bawaan API
+                </button>
             </div>
         </form>
     </div>
@@ -473,6 +483,41 @@
                 window.location.href = deleteUrl;
             }
         });
+    }
+
+    // Variabel global sementara untuk menampung ID hero yang sedang aktif di modal
+    let idHeroAktifMedsos = null;
+
+    // FIX JS: Mengatur penampilan isi modal ganti gambar secara pintar
+    function bukaModalGantiGambar(btnElement) {
+        const idHero = btnElement.getAttribute('data-id');
+        const statusHero = btnElement.getAttribute('data-status');
+        const isKustom = btnElement.getAttribute('data-is-kustom') === 'true';
+
+        // Set ID ke hidden input form upload
+        idHeroAktifMedsos = idHero;
+        document.getElementById('input_id_hero_ganti').value = idHero;
+
+        const btnResetApi = document.getElementById('btn_reset_api');
+
+        // KONDISI UX: Tampilkan tombol kembalikan API hanya jika tipenya API dan gambarnya sedang diganti
+        if (statusHero === 'API' && isKustom) {
+            btnResetApi.classList.remove('hidden');
+        } else {
+            btnResetApi.classList.add('hidden');
+        }
+
+        modal_ganti_gambar.showModal();
+    }
+
+    // FIX JS: Fungsi pemicu saat user menekan tombol 'Gunakan Gambar Bawaan API' di dalam modal
+    function eksekusiResetApi() {
+        if (idHeroAktifMedsos) {
+            // Tutup modal ganti gambar terlebih dahulu agar tidak glitching
+            modal_ganti_gambar.close();
+            // Langsung alihkan navigasi browser menuju endpoint backend untuk mereset gambar
+            window.location.href = '/hero/clear-gambar/' + idHeroAktifMedsos;
+        }
     }
 </script>
 </body>
