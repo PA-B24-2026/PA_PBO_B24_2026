@@ -33,7 +33,12 @@ public class HeroServiceImpl implements HeroService {
 
     @Override
     public void saveHero(Hero hero) {
-        heroRepo.insertHeroManual(hero.getNamaHero(), hero.getRole(), "MANUAL", hero.getGambar());
+        heroRepo.insertHeroManual(
+                hero.getNamaHero(),
+                hero.getRole(),
+                "MANUAL",
+                hero.getGambar()
+        );
     }
 
     @Override
