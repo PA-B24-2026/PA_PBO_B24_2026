@@ -97,8 +97,8 @@
             <button type="button" onclick="prosesSimpanTierList()" class="btn btn-sm btn-success text-black font-bold norm-case w-full md:w-auto px-6">
                 <i class="fa-solid fa-floppy-disk"></i> Bekukan TierList ke DB
             </button>
-            <button type="button" onclick="resetCanvas()" class="btn btn-sm btn-ouline btn-error norm-case px-4">
-                <i class="fa solid fa-rotate-left"></i> Canvas Baru
+            <button type="button" onclick="resetCanvas()" class="btn btn-sm btn-outline btn-error norm-case px-4">
+                <i class="fa-solid fa-rotate-left"></i> Canvas Baru
             </button>
         </form>
     </section>
@@ -125,10 +125,6 @@
 
                 <div class="p-1 bg-slate-900 text-[9px] text-center font-medium truncate pointer-events-none" th:text="${h.namaHero}">Nama</div>
 
-                <button th:onclick="'konfirmasiHapus(\'' + @{'/hero/delete/' + ${h.idHero}} + '\')'"
-                        class="absolute top-0 right-0 btn btn-error btn-xs btn-circle scale-0 group-hover:scale-75 transition-transform duration-150 z-10 shadow-lg">
-                    ✕
-                </button>
             </div>
 
         </div>
@@ -195,6 +191,12 @@
                 <label class="label"><span class="label-text text-slate-400 text-sm">Nama Hero</span></label>
                 <input type="text" name="namaHero" placeholder="Misal: Ling" class="input input-bordered bg-slate-950 border-slate-700 w-full" required />
             </div>
+
+            <div class="form-control">
+                <label class="label"><span class="label-text text-slate-400 text-sm">URL Gambar Avatar (Link Gambar)</span></label>
+                <input type="url" name="gambar" placeholder="https://example.com/chou.png" class="input input-bordered bg-slate-950 border-slate-700 w-full" />
+            </div>
+
             <div class="form-control">
                 <label class="label"><span class="label-text text-slate-400 text-sm">Role (Pilih Multi)</span></label>
                 <div class="grid grid-cols-2 gap-2 bg-slate-950 p-3 rounded-lg border border-slate-800">
@@ -275,7 +277,7 @@
 
     // 5. FUNGSI LOAD DATA: MEMBONGKAR JSON DB DAN DISTRIBUSI ELEMENT HERO KE PAPAN
     function bukaDanAturPapan(btnElement) {
-        const idTier = btnElement.getAttribute('data-id'); // ambil id tier
+        const idTier = btnElement.getAttribute('data-id');
         const nama = btnElement.getAttribute('data-nama');
         const jenis = btnElement.getAttribute('data-jenis');
         const susunanStr = btnElement.getAttribute('data-susunan');
@@ -293,7 +295,7 @@
             });
 
             // Langkah B: Sinkronkan Form Isian atas
-            document.getElementById('idTierInput').value = idTier // untuk ambil ID
+            document.getElementById('idTierInput').value = idTier
             document.querySelector('input[name="namaTierList"]').value = nama || '';
             document.querySelector('select[name="jenisTier"]').value = jenis;
 
@@ -312,7 +314,6 @@
                 }
             });
 
-            // TUTUP MODAL SETELAH BERHASIL LOAD DATA
             modal_load.close();
 
             Swal.fire({
@@ -332,17 +333,15 @@
         }
     }
 
-    // 4. FUNGSI BARU: REFRESH CANVAS (MEMBERSIHKAN PAPAN DAN MODUL MENJADI NEW INSERT DATA)
+    // 4. FUNGSI REFRESH CANVAS (MEMBERSIHKAN PAPAN DAN MODUL MENJADI NEW INSERT DATA)
     function resetCanvas() {
         const poolUtama = document.getElementById('heroPoolZone');
         const semuaHeroAktif = document.querySelectorAll('.tier-row .hero-item');
 
-        // Kembalikan semua hero ke dalam pool sandbox bawah
         semuaHeroAktif.forEach(hero => {
             poolUtama.appendChild(hero);
         });
 
-        // Kosongkan ID, Nama, dan kembalikan select option ke default
         document.getElementById('idTierInput').value = '';
         document.querySelector('input[name="namaTierList"]').value = '';
         document.querySelector('select[name="jenisTier"]').value = 'serius';
@@ -388,23 +387,6 @@
             background: '#111827',
             color: '#f3f4f6',
             confirmButtonColor: '#eab308'
-        });
-    }
-
-    // 4. KONFIRMASI HAPUS DATA HERO MASTER
-    function konfirmasiHapus(deleteUrl) {
-        Swal.fire({
-            title: 'Hapus Master Hero?',
-            text: "Hero akan dihapus total dari database sistem!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#ef4444',
-            cancelButtonColor: '#4b5563',
-            confirmButtonText: 'Ya, Hapus!',
-            background: '#111827',
-            color: '#f3f4f6'
-        }).then((result) => {
-            if (result.isConfirmed) window.location.href = deleteUrl;
         });
     }
 
