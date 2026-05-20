@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -36,7 +37,6 @@ public class HeroController {
     public String save(@ModelAttribute Hero hero,
                        @RequestParam(value = "roleList", required = false) List<String> roleList,
                        RedirectAttributes ra) {
-        // TRY-CATCH SINKRON REVISI 1
         try {
             if (roleList != null && !roleList.isEmpty()) {
                 hero.setRole(String.join(", ", roleList));
@@ -60,7 +60,6 @@ public class HeroController {
                                @RequestParam("susunanHero") String susunan,
                                @RequestParam("jenisTier") String jenis,
                                RedirectAttributes ra) {
-        // TRY-CATCH SINKRON REVISI 1
         try {
             TierList kustomUser = jenis.equalsIgnoreCase("serius") ? new CompetitiveTierList() : new CasualTierList();
 
@@ -85,7 +84,6 @@ public class HeroController {
 
     @GetMapping("/tierlist/delete/{id}")
     public String deleteTierList(@PathVariable Long id, RedirectAttributes ra) {
-        // TRY-CATCH SINKRON REVISI 1
         try {
             heroService.deleteTierListById(id);
             ra.addFlashAttribute("pesan", "Referensi Tier List berhasil dihapus permanen.");
@@ -97,16 +95,47 @@ public class HeroController {
         return "redirect:/";
     }
 
-    // KONDISIONAL REVISI: Menghapus data hero dari pool bahan sandbox (Khusus Manual)
+    // FIX: ENDPOINT UNTUK PROSES GANTI GAMBAR ALTERNATIF (UPLOAD FILE LOKAL)
+    @PostMapping("/hero/ganti-gambar")
+    public String gantiGambar(@RequestParam("idHero") Long idHero,
+                              @RequestParam("fileGambarAlternatif") MultipartFile fileGambar,
+                              RedirectAttributes ra) {
+        try {
+            if (fileGambar != null && !fileGambar.isEmpty()) {
+                String folderTujuan = new java.io.File("src/main/resources/static/uploads/").getAbsolutePath();
+                String namaFileUnik = "alt_" + System.currentTimeMillis() + "_" + fileGambar.getOriginalFilename();
+                java.io.File fileFisik = new java.io.File(folderTujuan + java.io.File.separator + namaFileUnik);
+
+                if (!fileFisik.getParentFile().exists()) {
+                    fileFisik.getParentFile().mkdirs();
+                }
+                fileGambar.transferTo(fileFisik);
+
+                String pathLokalBaru = "/uploads/" + namaFileUnik;
+
+                // Panggil service untuk eksekusi query native UPDATE ke database
+                heroService.updateGambarHeroManual(idHero, pathLokalBaru);
+
+                ra.addFlashAttribute("pesan", "Gambar alternatif berhasil dipasang!");
+                ra.addFlashAttribute("tipe", "success");
+            } else {
+                ra.addFlashAttribute("pesan", "File gambar kosong atau tidak valid!");
+                ra.addFlashAttribute("tipe", "error");
+            }
+        } catch (Exception e) {
+            ra.addFlashAttribute("pesan", "Gagal mengganti gambar: " + e.getMessage());
+            ra.addFlashAttribute("tipe", "error");
+        }
+        return "redirect:/";
+    }
+
+    // FIX: HANYA ADA SATU ROUTING DELETE HERO DI SINI (ANTI BENTROK)
     @GetMapping("/hero/delete/{id}")
     public String delete(@PathVariable Long id, RedirectAttributes ra) {
         try {
-            // Karena kita murni menggunakan manual query, panggil delete lewat repository kita sendiri
-            // Tapi sebelumnya kita cek dulu, apakah hero ini benar-benar ada
             Hero hero = heroService.getHeroById(id);
 
             if (hero != null && "MANUAL".equalsIgnoreCase(hero.getStatusHero())) {
-                // Buat query delete manual di repository
                 heroService.deleteHeroById(id);
                 ra.addFlashAttribute("pesan", "Data hero manual berhasil dicabut dari sistem.");
                 ra.addFlashAttribute("tipe", "info");

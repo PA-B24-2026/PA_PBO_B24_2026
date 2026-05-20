@@ -44,7 +44,6 @@
 
     <section class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden mb-8">
 
-        <!-- Tier S: Kuning/Emas -->
         <div class="flex border-b border-slate-800 min-h-[90px]">
             <div class="w-24 bg-slate-800 flex items-center justify-center shrink-0 select-none border-r border-slate-800">
                 <span class="text-3xl font-black text-yellow-400">S</span>
@@ -52,7 +51,6 @@
             <div class="tier-row flex flex-wrap gap-2 p-2 items-center flex-grow bg-slate-900/40" data-tier="S" ondragover="allowDrop(event)" ondrop="drop(event)"></div>
         </div>
 
-        <!-- Tier A: Merah -->
         <div class="flex border-b border-slate-800 min-h-[90px]">
             <div class="w-24 bg-slate-800 flex items-center justify-center shrink-0 select-none border-r border-slate-800">
                 <span class="text-2xl font-black text-red-500">A</span>
@@ -60,7 +58,6 @@
             <div class="tier-row flex flex-wrap gap-2 p-2 items-center flex-grow bg-slate-900/40" data-tier="A" ondragover="allowDrop(event)" ondrop="drop(event)"></div>
         </div>
 
-        <!-- Tier B: Oranye -->
         <div class="flex border-b border-slate-800 min-h-[90px]">
             <div class="w-24 bg-slate-800 flex items-center justify-center shrink-0 select-none border-r border-slate-800">
                 <span class="text-2xl font-black text-orange-500">B</span>
@@ -68,7 +65,6 @@
             <div class="tier-row flex flex-wrap gap-2 p-2 items-center flex-grow bg-slate-900/40" data-tier="B" ondragover="allowDrop(event)" ondrop="drop(event)"></div>
         </div>
 
-        <!-- Tier C: Hijau Emerald -->
         <div class="flex border-b border-slate-800 min-h-[90px]">
             <div class="w-24 bg-slate-800 flex items-center justify-center shrink-0 select-none border-r border-slate-800">
                 <span class="text-2xl font-black text-emerald-500">C</span>
@@ -76,7 +72,6 @@
             <div class="tier-row flex flex-wrap gap-2 p-2 items-center flex-grow bg-slate-900/40" data-tier="C" ondragover="allowDrop(event)" ondrop="drop(event)"></div>
         </div>
 
-        <!-- Tier D: Biru -->
         <div class="flex border-b border-slate-800 min-h-[90px]">
             <div class="w-24 bg-slate-800 flex items-center justify-center shrink-0 select-none border-r border-slate-800">
                 <span class="text-2xl font-black text-blue-500">D</span>
@@ -84,7 +79,6 @@
             <div class="tier-row flex flex-wrap gap-2 p-2 items-center flex-grow bg-slate-900/40" data-tier="D" ondragover="allowDrop(event)" ondrop="drop(event)"></div>
         </div>
 
-        <!-- Tier F: Abu-abu -->
         <div class="flex min-h-[90px]">
             <div class="w-24 bg-slate-800 flex items-center justify-center shrink-0 select-none border-r border-slate-800">
                 <span class="text-2xl font-black text-slate-400">F</span>
@@ -136,13 +130,28 @@
                  ondragend="dragEnd(event)"
                  class="hero-item card w-20 bg-slate-800 border border-slate-700 rounded-lg overflow-hidden cursor-grab active:cursor-grabbing shadow-sm hover:border-slate-500 transition-all select-none group relative">
 
-                <div class="w-full aspect-square bg-slate-950 flex items-center justify-center overflow-hidden pointer-events-none">
-                    <img th:if="${h.gambar != null}" th:src="${h.gambar}" alt="Img" class="w-full h-full object-cover" />
-                    <i th:if="${h.gambar == null}" class="fa-solid fa-user text-slate-600 text-lg"></i>
+                <div class="w-full aspect-square bg-slate-950 flex items-center justify-center overflow-hidden relative">
+                    <img th:if="${h.gambar != null}" th:src="${h.gambar}" alt="Img" class="w-full h-full object-cover pointer-events-none" />
+                    <i th:if="${h.gambar == null}" class="fa-solid fa-user text-slate-600 text-lg pointer-events-none"></i>
+
+                    <div class="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 flex flex-col gap-1 items-center justify-center transition-opacity p-1 z-10">
+
+                        <button type="button" class="text-[9px] btn btn-neutral btn-xs p-1 h-auto min-h-0 w-full text-amber-400 font-bold tracking-tight uppercase"
+                                th:onclick="'bukaModalGantiGambar(' + ${h.idHero} + ')'">
+                            Ganti
+                        </button>
+
+                        <button th:if="${h.statusHero == 'MANUAL'}"
+                                type="button"
+                                class="text-[9px] btn btn-error btn-xs p-1 h-auto min-h-0 w-full text-white font-bold tracking-tight uppercase"
+                                th:onclick="'konfirmasiHapus(\'' + @{'/hero/delete/' + ${h.idHero}} + '\')'">
+                            Hapus
+                        </button>
+
+                    </div>
                 </div>
 
                 <div class="p-1 bg-slate-900 text-[9px] text-center font-medium truncate pointer-events-none" th:text="${h.namaHero}">Nama</div>
-
             </div>
 
         </div>
@@ -232,6 +241,27 @@
     </div>
 </dialog>
 
+<dialog id="modal_ganti_gambar" class="modal backdrop-blur-sm">
+    <div class="modal-box bg-slate-900 border border-slate-800 p-6 rounded-xl max-w-sm">
+        <h3 class="font-bold text-md mb-3 text-slate-200 flex items-center gap-2">
+            <i class="fa-solid fa-image text-amber-500"></i> Ganti Gambar Hero
+        </h3>
+        <form th:action="@{/hero/ganti-gambar}" method="POST" enctype="multipart/form-data" class="space-y-4">
+            <input type="hidden" name="idHero" id="input_id_hero_ganti" />
+
+            <div class="form-control">
+                <label class="label"><span class="label-text text-slate-400 text-xs">Pilih File Gambar Pengganti</span></label>
+                <input type="file" name="fileGambarAlternatif" accept="image/*" class="file-input file-input-bordered file-input-xs file-input-warning w-full bg-slate-950 font-sans text-xs" required />
+            </div>
+
+            <div class="modal-action border-t border-slate-800 pt-2 mt-2">
+                <button type="button" class="btn btn-xs btn-ghost" onclick="modal_ganti_gambar.close()">Batal</button>
+                <button type="submit" class="btn btn-xs btn-warning font-bold text-black">Upload & Terapkan</button>
+            </div>
+        </form>
+    </div>
+</dialog>
+
 <script th:inline="javascript">
 
     // 1. FUNGSI DRAG & DROP UTAMA
@@ -260,6 +290,32 @@
         }
 
         targetZone.appendChild(draggedElement);
+    }
+
+    // FIX JS 1: TRIGGER MEMBUKA MODAL DAN MENYUNTIKAN ID HERO YANG DIKLIK USER
+    function bukaModalGantiGambar(idHero) {
+        document.getElementById('input_id_hero_ganti').value = idHero;
+        modal_ganti_gambar.showModal();
+    }
+
+    // FIX JS 2: SWEETALERT INTERAKTIF REDIRECT KE ROUTING DELETE SPRING BOOT
+    function konfirmasiHapus(deleteUrl) {
+        Swal.fire({
+            title: 'Hapus Hero Manual?',
+            text: "Data master hero kustom ini akan dilenyapkan secara permanen dari database!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#4b5563',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal',
+            background: '#111827',
+            color: '#f3f4f6'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = deleteUrl;
+            }
+        });
     }
 
     // SERIALISASI DATA SEBELUM FORM SUBMIT

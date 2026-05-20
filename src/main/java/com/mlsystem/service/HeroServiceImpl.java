@@ -58,6 +58,11 @@ public class HeroServiceImpl implements HeroService {
         heroRepo.deleteHeroManualById(id);
     }
 
+    @Override
+    public void updateGambarHeroManual(Long id, String gambar) {
+        heroRepo.updateGambarHeroManual(id, gambar);
+    }
+
     // FIXED 2: Fungsi Sync API diaktifkan kembali dan menggunakan query native manual
     @Override
     @SuppressWarnings("unchecked")

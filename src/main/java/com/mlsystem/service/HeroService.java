@@ -11,6 +11,7 @@ public interface HeroService {
     Hero getHeroById(Long id);
     void deleteHeroById(Long id);
 
+    void updateGambarHeroManual(Long id, String gambar);
 
     // Method untuk Tier List (Disamakan dengan kebutuhan Controller)
     List<TierList> getAllTiers();
