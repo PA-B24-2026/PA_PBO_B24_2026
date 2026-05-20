@@ -136,8 +136,29 @@ public class HeroController {
             Hero hero = heroService.getHeroById(id);
 
             if (hero != null && "MANUAL".equalsIgnoreCase(hero.getStatusHero())) {
+
+                // === LOGIKA PEMBERSIHAN FILE FISIK GAMBAR SAMPAH ===
+                String pathGambarLama = hero.getGambar();
+                if (pathGambarLama != null && pathGambarLama.startsWith("/uploads/")) {
+                    // Cari alamat absolute folder static/uploads di storage lokal
+                    String folderPath = new java.io.File("src/main/resources/static").getAbsolutePath();
+                    java.io.File fileFisikGambar = new java.io.File(folderPath + pathGambarLama);
+
+                    // Jika file fisik ada di komputer, eksekusi penghapusan secara instan
+                    if (fileFisikGambar.exists()) {
+                        boolean suksesHapusFile = fileFisikGambar.delete();
+                        if (suksesHapusFile) {
+                            System.out.println("[LOG] Berhasil menghapus file fisik sampah: " + fileFisikGambar.getName());
+                        } else {
+                            System.err.println("[LOG WARNING] File ditemukan tapi gagal dihapus dari OS.");
+                        }
+                    }
+                }
+                // ==================================================
+
+                // Setelah berkas bersih, hapus baris record dari database MySQL
                 heroService.deleteHeroById(id);
-                ra.addFlashAttribute("pesan", "Data hero manual berhasil dicabut dari sistem.");
+                ra.addFlashAttribute("pesan", "Data hero manual dan file gambar berhasil dihapus permanen!");
                 ra.addFlashAttribute("tipe", "info");
             } else {
                 ra.addFlashAttribute("pesan", "Aksi ditolak! Hero bawaan API tidak boleh dihapus.");

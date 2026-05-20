@@ -213,27 +213,19 @@
 <dialog id="modal_tambah" class="modal backdrop-blur-sm">
     <div class="modal-box bg-slate-900 border border-slate-800 p-6 rounded-xl max-w-md">
         <h3 class="font-bold text-lg mb-4 text-slate-200">Tambah Hero Manual</h3>
-        <form th:action="@{/hero/save}" method="POST" class="space-y-4">
+
+        <form th:action="@{/hero/save}" method="POST" enctype="multipart/form-data" class="space-y-4">
             <div class="form-control">
                 <label class="label"><span class="label-text text-slate-400 text-sm">Nama Hero</span></label>
-                <input type="text" name="namaHero" placeholder="Misal: Ling" class="input input-bordered bg-slate-950 border-slate-700 w-full" required />
+                <input type="text" name="namaHero" placeholder="Misal: Ling" class="input input-bordered bg-slate-950 border-slate-700 w-full text-slate-200 focus:border-amber-500" required />
             </div>
 
             <div class="form-control">
-                <label class="label"><span class="label-text text-slate-400 text-sm">URL Gambar Avatar (Link Gambar)</span></label>
-                <input type="url" name="gambar" placeholder="https://example.com/chou.png" class="input input-bordered bg-slate-950 border-slate-700 w-full" />
+                <label class="label"><span class="label-text text-slate-400 text-sm">Upload Gambar Avatar</span></label>
+                <input type="file" name="fileGambar" accept=".jpg,.jpeg,.png" class="file-input file-input-bordered file-input-warning bg-slate-950 border-slate-700 w-full text-xs font-sans text-slate-300 focus:border-amber-500" required />
             </div>
 
-            <div class="form-control">
-                <label class="label"><span class="label-text text-slate-400 text-sm">Role (Pilih Multi)</span></label>
-                <div class="grid grid-cols-2 gap-2 bg-slate-950 p-3 rounded-lg border border-slate-800">
-                    <label th:each="r : ${#strings.arraySplit('Assassin,Marksman,Tank,Mage,Fighter,Support', ',')}" class="flex items-center gap-2 cursor-pointer p-1">
-                        <input type="checkbox" name="roleList" th:value="${r}" class="checkbox checkbox-xs checkbox-warning rounded" />
-                        <span class="label-text text-xs text-slate-300" th:text="${r}">Role</span>
-                    </label>
-                </div>
-            </div>
-            <div class="modal-action">
+            <div class="modal-action border-t border-slate-800 pt-3 mt-4">
                 <button type="button" class="btn btn-sm btn-ghost text-slate-400 hover:text-slate-200 hover:bg-slate-800" onclick="modal_tambah.close()">Batal</button>
                 <button type="submit" class="btn btn-sm bg-amber-500 hover:bg-amber-400 text-amber-950 font-bold border-none shadow-lg shadow-amber-500/20">Simpan</button>
             </div>
