@@ -97,5 +97,27 @@ public class HeroController {
         return "redirect:/";
     }
 
-    // REVISI 2: ROUTE HAPUS HERO DI POOL SUDAH DIHAPUS TOTAL DARI SINI
+    // KONDISIONAL REVISI: Menghapus data hero dari pool bahan sandbox (Khusus Manual)
+    @GetMapping("/hero/delete/{id}")
+    public String delete(@PathVariable Long id, RedirectAttributes ra) {
+        try {
+            // Karena kita murni menggunakan manual query, panggil delete lewat repository kita sendiri
+            // Tapi sebelumnya kita cek dulu, apakah hero ini benar-benar ada
+            Hero hero = heroService.getHeroById(id);
+
+            if (hero != null && "MANUAL".equalsIgnoreCase(hero.getStatusHero())) {
+                // Buat query delete manual di repository
+                heroService.deleteHeroById(id);
+                ra.addFlashAttribute("pesan", "Data hero manual berhasil dicabut dari sistem.");
+                ra.addFlashAttribute("tipe", "info");
+            } else {
+                ra.addFlashAttribute("pesan", "Aksi ditolak! Hero bawaan API tidak boleh dihapus.");
+                ra.addFlashAttribute("tipe", "error");
+            }
+        } catch (Exception e) {
+            ra.addFlashAttribute("pesan", "Gagal menghapus hero: " + e.getMessage());
+            ra.addFlashAttribute("tipe", "error");
+        }
+        return "redirect:/";
+    }
 }

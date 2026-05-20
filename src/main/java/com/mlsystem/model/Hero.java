@@ -14,6 +14,7 @@ public class Hero {
 
     private String namaHero;
     private String role;
+    private String statusHero;
     private String gambar; // Teks bebas, misal: "Chou, Kaja, Tigreal"
 
     // CONSTRUCTOR KOSONG Wajib buat si JPA Hibernate
@@ -43,14 +44,14 @@ public class Hero {
         this.role = role;
     }
 
-    public String getGambar() {
-        return gambar;
+    public String getStatusHero() {
+        return statusHero;
+    }
+    public void setStatusHero(String statusHero) {
+        this.statusHero = statusHero;
     }
 
-    public String setGambar() {
+    public String getGambar() {
         return gambar;
-    }
-    public void setGambar(String gambar) {
-        this.gambar = gambar;
     }
 }

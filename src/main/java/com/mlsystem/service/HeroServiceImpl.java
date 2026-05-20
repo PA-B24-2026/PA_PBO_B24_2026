@@ -33,7 +33,7 @@ public class HeroServiceImpl implements HeroService {
 
     @Override
     public void saveHero(Hero hero) {
-        heroRepo.insertHeroManual(hero.getNamaHero(), hero.getGambar(), hero.getRole());
+        heroRepo.insertHeroManual(hero.getNamaHero(), hero.getRole(), "MANUAL", hero.getGambar());
     }
 
     @Override
@@ -53,7 +53,10 @@ public class HeroServiceImpl implements HeroService {
         return heroRepo.findHeroByIdManual(id);
     }
 
-    // REVISI 2: Method deleteHeroById sudah dihapus dari layer service impl
+    @Override
+    public void deleteHeroById(Long id) {
+        heroRepo.deleteHeroManualById(id);
+    }
 
     // FIXED 2: Fungsi Sync API diaktifkan kembali dan menggunakan query native manual
     @Override
@@ -94,7 +97,7 @@ public class HeroServiceImpl implements HeroService {
 
                         // Memakai fungsi pengecekan duplikat dan insert manual murni
                         if (nama != null && heroRepo.findByNamaHeroManual(nama) == null) {
-                            heroRepo.insertHeroManual(nama, gambar, "Unset");
+                            heroRepo.insertHeroManual(nama, "Unset", "API", gambar);
                         }
                     }
                 }
