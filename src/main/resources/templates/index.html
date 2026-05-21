@@ -500,25 +500,27 @@
     // Variabel global sementara untuk menampung ID hero yang sedang aktif di modal
     let idHeroAktifMedsos = null;
 
-    // FIX JS: Mengatur penampilan isi modal ganti gambar secara pintar
+    // FIX JS: Mengatur penampilan isi modal ganti gambar secara pintar berdasarkan element tombol yang diklik
     function bukaModalGantiGambar(btnElement) {
+        // Ambil data-attributes yang dikirimkan oleh Thymeleaf secara dinamis
         const idHero = btnElement.getAttribute('data-id');
         const statusHero = btnElement.getAttribute('data-status');
         const isKustom = btnElement.getAttribute('data-is-kustom') === 'true';
 
-        // Set ID ke hidden input form upload
+        // Simpan ID ke variabel global dan set ke hidden input form upload
         idHeroAktifMedsos = idHero;
         document.getElementById('input_id_hero_ganti').value = idHero;
 
         const btnResetApi = document.getElementById('btn_reset_api');
 
-        // KONDISI UX: Tampilkan tombol kembalikan API hanya jika tipenya API dan gambarnya sedang diganti
+        // KONDISI PINTAR: Tampilkan tombol kembalikan API hanya jika tipenya API dan gambarnya sedang diganti
         if (statusHero === 'API' && isKustom) {
             btnResetApi.classList.remove('hidden');
         } else {
             btnResetApi.classList.add('hidden');
         }
 
+        // Tampilkan modal ke layar
         modal_ganti_gambar.showModal();
     }
 

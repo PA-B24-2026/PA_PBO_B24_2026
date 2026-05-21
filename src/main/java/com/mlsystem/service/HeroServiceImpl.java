@@ -36,7 +36,7 @@ public class HeroServiceImpl implements HeroService {
         // FIX: Mengirimkan 5 parameter sesuai cetak biru baru repository kita
         heroRepo.insertHeroManual(
                 hero.getNamaHero(),
-                "UNSET",
+                "Unset",
                 "MANUAL",
                 "/images/default-hero.png", // Masuk ke kolom 'gambar' asli (cadangan)
                 hero.getGambarKustom()      // Masuk ke kolom 'gambar_kustom'

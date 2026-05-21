@@ -18,6 +18,7 @@ public class HeroController {
 
     @GetMapping("/")
     public String index(Model model) {
+        heroService.syncFromApi();
         model.addAttribute("heroes", heroService.getAllHeroes());
         model.addAttribute("tiers", heroService.getAllTiers());
         return "index";

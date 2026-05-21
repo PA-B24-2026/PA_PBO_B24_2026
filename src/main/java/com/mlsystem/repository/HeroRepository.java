@@ -28,7 +28,7 @@ public interface HeroRepository extends JpaRepository<Hero, Long> {
     // REVISI: Menambahkan kolom gambar_kustom ke dalam baris insert manual
     @Transactional
     @Modifying
-    @Query(value = "INSERT INTO tb_hero (nama_hero, role, status_hero, gambar, gambar_kustom) VALUES (:nama, :role, :status, :gambar, :gambarKustom)", nativeQuery = true)
+    @Query(value = "INSERT INTO tb_hero (nama_hero, role, status, gambar, gambar_kustom) VALUES (:nama, :role, :status, :gambar, :gambarKustom)", nativeQuery = true)
     void insertHeroManual(@Param("nama") String nama,
                           @Param("role") String role,
                           @Param("status") String status,
