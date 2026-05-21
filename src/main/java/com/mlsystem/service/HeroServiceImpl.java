@@ -36,7 +36,7 @@ public class HeroServiceImpl implements HeroService {
         // FIX: Mengirimkan 5 parameter sesuai cetak biru baru repository kita
         heroRepo.insertHeroManual(
                 hero.getNamaHero(),
-                hero.getRole(),
+                "UNSET",
                 "MANUAL",
                 "/images/default-hero.png", // Masuk ke kolom 'gambar' asli (cadangan)
                 hero.getGambarKustom()      // Masuk ke kolom 'gambar_kustom'
@@ -78,8 +78,18 @@ public class HeroServiceImpl implements HeroService {
     @Override
     @SuppressWarnings("unchecked")
     public void syncFromApi() {
+        // Cek dulu ke database, apakah sudah ada data heronya?
+        long jumlahHeroDiDb = heroRepo.count();
+
+        // KONDISI UX PINTAR: Jika DB sudah ada isinya, stop di sini! Gak usah tembak API luar lagi.
+        if (jumlahHeroDiDb > 0) {
+            System.out.println("[LOG] Data DB aman (Terisi " + jumlahHeroDiDb + " hero). Melewati sync API.");
+            return;
+        }
+
+        // JIKA DB KOSONG (Baru beres truncate / pertama kali install), BARU JALANKAN PROSES DI BAWAH:
         System.out.println("=============================================");
-        System.out.println("[LOG] MEMULAI PROSES SINKRONISASI API...");
+        System.out.println("[LOG] DB KOSONG! OTOMATIS MENARIK DATA API...");
         System.out.println("=============================================");
 
         org.springframework.web.client.RestTemplate rest = new org.springframework.web.client.RestTemplate();
@@ -111,7 +121,7 @@ public class HeroServiceImpl implements HeroService {
                         String nama = (String) heroData.get("name");
                         String gambar = (String) heroData.get("head");
 
-                        // FIX ARGUMEN: Tambahkan , null di parameter ke-5 agar klop dengan query insertHeroManual baru
+                        // Masukkan ke database dengan urutan 5 parameter aman kita
                         if (nama != null && heroRepo.findByNamaHeroManual(nama) == null) {
                             heroRepo.insertHeroManual(nama, "Unset", "API", gambar, null);
                         }
@@ -119,8 +129,8 @@ public class HeroServiceImpl implements HeroService {
                 }
             }
         } catch (Exception e) {
-            System.err.println("[LOG ERROR] Gagal sync API: " + e.getMessage());
+            System.err.println("[LOG ERROR] Gagal sync otomatis: " + e.getMessage());
         }
-        System.out.println("[LOG] SINKRONISASI API SELESAI");
+        System.out.println("[LOG] SINKRONISASI OTOMATIS SELESAI.");
     }
 }
