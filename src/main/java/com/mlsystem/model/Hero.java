@@ -22,7 +22,7 @@ public class Hero {
 
     private String gambar; // Teks bebas, misal: "Chou, Kaja, Tigreal"
 
-    @Column(name = "gambar_kustom") // FIX: Disamakan dengan script SQL native fallback kita
+    @Column(name = "gambar_custom") // FIX: Disamakan dengan script SQL native fallback kita
     private String gambarKustom;
 
     // CONSTRUCTOR KOSONG Wajib buat si JPA Hibernate
