@@ -12,23 +12,23 @@ import java.util.List;
 @Repository
 public interface TierListRepository extends JpaRepository<TierList, Long> {
 
-    // 1. SELECT MANUAL (Urut berdasarkan ID tertinggi / Datetime terbaru)
+    //select tier list
     @Query(value = "SELECT * FROM tb_tierlist ORDER BY id_tier DESC", nativeQuery = true)
     List<TierList> findAllByOrderByIdTierDesc();
 
-    // 2. INSERT MANUAL (Untuk simpan data baru)
+    //insert (untuk simpan data baru)
     @Transactional
     @Modifying
     @Query(value = "INSERT INTO tb_tierlist (nama_tierlist, susunan_hero, jenis_tierlist) VALUES (:nama, :susunan, :jenis)", nativeQuery = true)
     void insertManual(@Param("nama") String nama, @Param("susunan") String susunan, @Param("jenis") String jenis);
 
-    // 3. UPDATE MANUAL (Untuk edit data berdasarkan id_tier)
+    // 3.update tier list (edit2)
     @Transactional
     @Modifying
     @Query(value = "UPDATE tb_tierlist SET nama_tierlist = :nama, susunan_hero = :susunan, jenis_tierlist = :jenis WHERE id_tier = :id", nativeQuery = true)
     void updateManual(@Param("id") Long id, @Param("nama") String nama, @Param("susunan") String susunan, @Param("jenis") String jenis);
 
-    // 4. DELETE MANUAL (Untuk hapus data berdasarkan id_tier)
+    //hapus tier list
     @Transactional
     @Modifying
     @Query(value = "DELETE FROM tb_tierlist WHERE id_tier = :id", nativeQuery = true)

@@ -33,13 +33,13 @@ public class HeroServiceImpl implements HeroService {
 
     @Override
     public void saveHero(Hero hero) {
-        // FIX: Mengirimkan 5 parameter sesuai cetak biru baru repository kita
+        //Mengirimkan 5 parameter
         heroRepo.insertHeroManual(
                 hero.getNamaHero(),
                 "Unset",
                 "MANUAL",
-                "/images/default-hero.png", // Masuk ke kolom 'gambar' asli (cadangan)
-                hero.getGambarKustom()      // Masuk ke kolom 'gambar_kustom'
+                "/images/default-hero.png", //ke kolom 'gambar' asli (cadangan)
+                hero.getGambarKustom()      //ke kolom 'gambar_kustom'
         );
     }
 
@@ -69,7 +69,6 @@ public class HeroServiceImpl implements HeroService {
         heroRepo.updateGambarHeroManual(id, gambar);
     }
 
-    // FIX IMPLEMENTASI: Menambahkan override clearGambarKustom bawaan interface
     @Override
     public void clearGambarKustom(Long id) {
         heroRepo.clearGambarKustomManual(id);
@@ -78,16 +77,16 @@ public class HeroServiceImpl implements HeroService {
     @Override
     @SuppressWarnings("unchecked")
     public void syncFromApi() {
-        // Cek dulu ke database, apakah sudah ada data heronya?
+        //cek keberadaan hero di db
         long jumlahHeroDiDb = heroRepo.count();
 
-        // KONDISI UX PINTAR: Jika DB sudah ada isinya, stop di sini! Gak usah tembak API luar lagi.
+        //jika sdh ada tidak usah tembak API
         if (jumlahHeroDiDb > 0) {
             System.out.println("[LOG] Data DB aman (Terisi " + jumlahHeroDiDb + " hero). Melewati sync API.");
             return;
         }
 
-        // JIKA DB KOSONG (Baru beres truncate / pertama kali install), BARU JALANKAN PROSES DI BAWAH:
+        //jika di db kosong
         System.out.println("=============================================");
         System.out.println("[LOG] DB KOSONG! OTOMATIS MENARIK DATA API...");
         System.out.println("=============================================");
@@ -121,7 +120,7 @@ public class HeroServiceImpl implements HeroService {
                         String nama = (String) heroData.get("name");
                         String gambar = (String) heroData.get("head");
 
-                        // Masukkan ke database dengan urutan 5 parameter aman kita
+                        //Masukkan ke database dengan urutan 5 parameter
                         if (nama != null && heroRepo.findByNamaHeroManual(nama) == null) {
                             heroRepo.insertHeroManual(nama, "Unset", "API", gambar, null);
                         }

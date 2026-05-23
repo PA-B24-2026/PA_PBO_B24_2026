@@ -278,7 +278,7 @@
 
 <script th:inline="javascript">
 
-    // FUNGSI DRAG & DROP UTAMA
+    //fungsi drag & drop
     function allowDrop(ev) {
         ev.preventDefault();
     }
@@ -306,7 +306,7 @@
         targetZone.appendChild(draggedElement);
     }
 
-    // SWEETALERT INTERAKTIF REDIRECT KE ROUTING DELETE SPRING BOOT
+    //peringatan saat ingin hapus
     function konfirmasiHapus(deleteUrl) {
         Swal.fire({
             title: 'Hapus Hero Manual?',
@@ -326,7 +326,7 @@
         });
     }
 
-    // SERIALISASI DATA SEBELUM FORM SUBMIT
+    //serialisasi data sebelum submit
     function prosesSimpanTierList() {
         let hasilSusunan = {};
         const barisTierList = document.querySelectorAll('.tier-row');
@@ -356,7 +356,7 @@
         document.getElementById('formTierList').submit();
     }
 
-    // FUNGSI LOAD DATA: MEMBONGKAR JSON DB DAN DISTRIBUSI ELEMENT HERO KE PAPAN
+    //load data
     function bukaDanAturPapan(btnElement) {
         const idTier = btnElement.getAttribute('data-id');
         const nama = btnElement.getAttribute('data-nama');
@@ -414,7 +414,7 @@
         }
     }
 
-    // FUNGSI REFRESH CANVAS (MEMBERSIHKAN PAPAN DAN MODUL MENJADI NEW INSERT DATA)
+    //reset tier list
     function resetCanvas() {
         const poolUtama = document.getElementById('heroPoolZone');
         const semuaHeroAktif = document.querySelectorAll('.tier-row .hero-item');
@@ -437,7 +437,7 @@
         });
     }
 
-    // FUNGSI OTOMATIS: MENGUBAH JSON MENJADI TEKS RINGKASAN INDAH SAAT DIALOD
+    //mengubah json jadi ringkasan
     document.addEventListener("DOMContentLoaded", function() {
         const previews = document.querySelectorAll('.json-clean-preview');
         previews.forEach(p => {
@@ -457,7 +457,7 @@
         });
     });
 
-    // SWEETALERT HANDLING FROM CONTROLLER FLASH ATTRIBUTE
+    //pesan peringatan
     const pesan = [[${pesan}]];
     const tipe = [[${tipe}]];
     if (pesan) {
@@ -471,7 +471,7 @@
         });
     }
 
-    // FUNGSI KONFIRMASI SWEETALERT UNTUK HAPUS REFERENSI TIERLIST
+    //peringatan konfirmasi hapus tier list
     function konfirmasiHapusTierList(deleteUrl) {
         Swal.fire({
             target: document.getElementById('modal_load'),
@@ -494,7 +494,7 @@
     // Variabel global sementara untuk menampung ID hero yang sedang aktif di modal
     let idHeroAktifMedsos = null;
 
-    // FIX JS: Mengatur penampilan isi modal ganti gambar secara pintar berdasarkan element tombol yang diklik
+    //Mengatur penampilan isi modal ganti gambar secara pintar berdasarkan element tombol yang diklik
     function bukaModalGantiGambar(btnElement) {
         // Ambil data-attributes yang dikirimkan oleh Thymeleaf secara dinamis
         const idHero = btnElement.getAttribute('data-id');
@@ -507,7 +507,7 @@
 
         const btnResetApi = document.getElementById('btn_reset_api');
 
-        // KONDISI PINTAR: Tampilkan tombol kembalikan API hanya jika tipenya API dan gambarnya sedang diganti
+        //Tampilkan tombol kembalikan API hanya jika tipenya API dan gambarnya sedang diganti
         if (statusHero === 'API' && isKustom) {
             btnResetApi.classList.remove('hidden');
         } else {
@@ -518,7 +518,7 @@
         modal_ganti_gambar.showModal();
     }
 
-    // FIX JS: Fungsi pemicu saat user menekan tombol 'Gunakan Gambar Bawaan API' di dalam modal
+    //trigger saat user menekan tombol 'Gunakan Gambar Bawaan API' di dalam modal
     function eksekusiResetApi() {
         if (idHeroAktifMedsos) {
             // Tutup modal ganti gambar terlebih dahulu agar tidak glitching
@@ -528,7 +528,7 @@
         }
     }
 
-    // FITUR SEARCH REAL-TIME: Menyaring penampilan hero berdasarkan inputan huruf
+    //fitur cari : Menyaring penampilan hero berdasarkan inputan huruf
     function fiturCariHero() {
         const kataKunci = document.getElementById('inputCariHero').value.toLowerCase();
         const daftarKartuHero = document.querySelectorAll('#heroPoolZone .hero-item');
@@ -536,7 +536,7 @@
         daftarKartuHero.forEach(kartu => {
             const namaHero = kartu.getAttribute('data-nama').toLowerCase();
 
-            // Jika kata kunci cocok, biarkan display normal. Jika tidak, sembunyikan (none)
+            //Jika kata kunci cocok, biarkan display normal. Jika tidak, sembunyikan (none)
             if (namaHero.includes(kataKunci)) {
                 kartu.style.display = "";
             } else {

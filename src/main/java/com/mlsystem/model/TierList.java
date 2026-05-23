@@ -2,7 +2,7 @@ package com.mlsystem.model;
 
 import jakarta.persistence.*;
 
-// ABSTRAKSI: Menandakan class ini sebagai Abstract Class (konsep Tier List tanpa multi-user)
+//Abstract Class
 @Entity
 // Mapping inheritance kedalam satu tabel tunggal di DB
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -16,25 +16,23 @@ public abstract class TierList {
     private Long idTier;
 
     @Column(name = "nama_tierlist")
-    private String namaTierList; // Isinya referensi dari user kayak Tier Jungle S31
+    private String namaTierList;
 
     @Lob
     @Column(name = "susunan_hero", columnDefinition = "TEXT")
-    private String susunanHero; // Menyimpan teks data susunan hero contoh S:Fanny,Pernan|A:Freya
+    private String susunanHero; // Menyimpan teks data susunan hero
 
-    // CONSTRUCTOR KOSONG
     public TierList() {}
 
-    // POLYMORFISME: Method abstract yang wajib di override secara berbeda oleh child class
+    //polymorfisme: Method abstract yang wajib di override secara berbeda oleh child class
     public abstract String getTemaWarnaKanvas();
 
-    // POLYMORFISME untuk tierlist
+    // polymorfisme untuk tierlist
     // Ngembalikan nilai serius or santai
     public abstract String getJenisKey();
-    // Ngembalikan nilai compe atau serius
     public abstract String getJenisName();
 
-    // GETTER & SETTER MANUAL
+    //getter dan setter manual
     public Long getIdTier() { return idTier; }
     public void setIdTier(Long idTier) { this.idTier = idTier; }
 

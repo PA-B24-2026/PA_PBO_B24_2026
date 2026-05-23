@@ -13,10 +13,10 @@ public interface HeroService {
 
     void updateGambarHeroManual(Long id, String gambar);
 
-    // FIX PARAMETER: Diubah menjadi 1 parameter saja agar klop dengan Controller
+    //1 parameter agar klop dengan Controller
     void clearGambarKustom(Long id);
 
-    // Method untuk Tier List (Disamakan dengan kebutuhan Controller)
+    // Method untuk Tier List
     List<TierList> getAllTiers();
     void saveTierList(TierList tierList);
     void deleteTierListById(Long id);

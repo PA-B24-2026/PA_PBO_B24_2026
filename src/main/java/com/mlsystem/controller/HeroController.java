@@ -49,7 +49,7 @@ public class HeroController {
                 if (!fileFisik.getParentFile().exists()) fileFisik.getParentFile().mkdirs();
                 fileGambar.transferTo(fileFisik);
 
-                // SIMPAN KE KUSTOM PROPERTI
+                //simpen ke custom properti
                 hero.setGambarKustom("/uploads/" + namaFileUnik);
             }
 
@@ -63,13 +63,13 @@ public class HeroController {
         return "redirect:/";
     }
 
-    // ROUTE BARU: Menghapus gambar kustom secara fisik dan mengembalikan avatar ke link API asli
+    //kembalikan gambar sesuai API
     @GetMapping("/hero/clear-gambar/{id}")
     public String clearGambarKustom(@PathVariable Long id, RedirectAttributes ra) {
         try {
             Hero hero = heroService.getHeroById(id);
             if (hero != null) {
-                // Hapus berkas fisik di uploads jika ada kustomnya
+                // Hapus foto di uploads
                 String kustomPath = hero.getGambarKustom();
                 if (kustomPath != null && kustomPath.startsWith("/uploads/")) {
                     String folderPath = new java.io.File("src/main/resources/static").getAbsolutePath();
@@ -77,7 +77,7 @@ public class HeroController {
                     if (fileFisik.exists()) fileFisik.delete();
                 }
 
-                // Set kolom gambar_kustom jadi NULL di database
+                // gambar jadi NULL
                 heroService.clearGambarKustom(id);
                 ra.addFlashAttribute("pesan", "Gambar berhasil dikembalikan ke default bawaan API!");
                 ra.addFlashAttribute("tipe", "success");
@@ -130,7 +130,7 @@ public class HeroController {
         return "redirect:/";
     }
 
-    // FIX: ENDPOINT UNTUK PROSES GANTI GAMBAR ALTERNATIF (UPLOAD FILE LOKAL)
+    // upload file local
     @PostMapping("/hero/ganti-gambar")
     public String gantiGambar(@RequestParam("idHero") Long idHero,
                               @RequestParam("fileGambarAlternatif") MultipartFile fileGambar,
@@ -164,7 +164,7 @@ public class HeroController {
         return "redirect:/";
     }
 
-    // FIX: HANYA ADA SATU ROUTING DELETE HERO DI SINI (ANTI BENTROK)
+    //satu routing delete hero agar tidak bentrok
     @GetMapping("/hero/delete/{id}")
     public String delete(@PathVariable Long id, RedirectAttributes ra) {
         try {
@@ -172,14 +172,14 @@ public class HeroController {
 
             if (hero != null && "MANUAL".equalsIgnoreCase(hero.getStatusHero())) {
 
-                // === LOGIKA PEMBERSIHAN FILE FISIK GAMBAR SAMPAH ===
+                //bersihkan file sampah
                 String pathGambarLama = hero.getGambarKustom();
                 if (pathGambarLama != null && pathGambarLama.startsWith("/uploads/")) {
-                    // Cari alamat absolute folder static/uploads di storage lokal
+                    //Cari alamat di storage lokal
                     String folderPath = new java.io.File("src/main/resources/static").getAbsolutePath();
                     java.io.File fileFisikGambar = new java.io.File(folderPath + pathGambarLama);
 
-                    // Jika file fisik ada di komputer, eksekusi penghapusan secara instan
+                    //hapus file jika ditemukan
                     if (fileFisikGambar.exists()) {
                         boolean suksesHapusFile = fileFisikGambar.delete();
                         if (suksesHapusFile) {
@@ -191,7 +191,7 @@ public class HeroController {
                 }
                 // ==================================================
 
-                // Setelah berkas bersih, hapus baris record dari database MySQL
+                // Setelah berkas bersih, hapus baris record dari database
                 heroService.deleteHeroById(id);
                 ra.addFlashAttribute("pesan", "Data hero manual dan file gambar berhasil dihapus permanen!");
                 ra.addFlashAttribute("tipe", "info");

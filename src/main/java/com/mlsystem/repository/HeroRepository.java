@@ -12,20 +12,19 @@ import java.util.List;
 @Repository
 public interface HeroRepository extends JpaRepository<Hero, Long> {
 
-    // 1. SELECT ALL HERO MANUAL
+    // select semua hero
     @Query(value = "SELECT * FROM tb_hero", nativeQuery = true)
     List<Hero> findAllManual();
 
-    // 2. FIND BY NAME MANUAL (Dipakai saat Sync API agar tidak duplikat)
+    //cari nama hero
     @Query(value = "SELECT * FROM tb_hero WHERE nama_hero = :nama LIMIT 1", nativeQuery = true)
     Hero findByNamaHeroManual(@Param("nama") String nama);
 
-    // 3. SELECT HERO BY ID MANUAL
+    //select hero by id
     @Query(value = "SELECT * FROM tb_hero WHERE id_hero = :id LIMIT 1", nativeQuery = true)
     Hero findHeroByIdManual(@Param("id") Long id);
 
-    // 4. INSERT MANUAL HERO + STATUS ENUM DB (Urutan Kolom Sesuai Letak di Model: Status dulu baru Gambar)
-    // REVISI: Menambahkan kolom gambar_custom ke dalam baris insert manual
+    //insert hero ke tb
     @Transactional
     @Modifying
     @Query(value = "INSERT INTO tb_hero (nama_hero, role, status, gambar, gambar_custom) VALUES (:nama, :role, :status, :gambar, :gambarKustom)", nativeQuery = true)
@@ -35,21 +34,19 @@ public interface HeroRepository extends JpaRepository<Hero, Long> {
                           @Param("gambar") String gambar,
                           @Param("gambarKustom") String gambarKustom);
 
-    // 5. UNTUK FITUR ALTERNATIF GANTI GAMBAR: Otomatis set status jadi MANUAL di tingkat DB
-    // REVISI: Mengubah target update ke kolom gambar_custom agar link asli bawaan API tidak hilang/rusak
+    //ganti gambar
     @Transactional
     @Modifying
     @Query(value = "UPDATE tb_hero SET gambar_custom = :gambarKustom WHERE id_hero = :id", nativeQuery = true)
     void updateGambarHeroManual(@Param("id") Long id, @Param("gambarKustom") String gambarKustom);
 
-    // 6. DELETE MASTER HERO MANUAL BY ID
+    //hapus hero
     @Transactional
     @Modifying
     @Query(value = "DELETE FROM tb_hero WHERE id_hero = :id", nativeQuery = true)
     void deleteHeroManualById(@Param("id") Long id);
 
-    // 7. RESET GAMBAR KUSTOM (BALIK KE API)
-    // BARU: Digunakan saat tombol 'Kembali API' ditekan untuk mengeset gambar_custom kembali jadi NULL
+    //reset foto kembali sesuai API
     @Transactional
     @Modifying
     @Query(value = "UPDATE tb_hero SET gambar_custom = NULL WHERE id_hero = :id", nativeQuery = true)

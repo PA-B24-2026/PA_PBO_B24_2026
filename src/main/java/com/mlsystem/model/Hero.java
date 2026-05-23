@@ -2,7 +2,6 @@ package com.mlsystem.model;
 
 import jakarta.persistence.*;
 
-// Menandakan kelas ini sebagai entitas DB untuk data hero
 @Entity
 @Table(name = "tb_hero")
 public class Hero {
@@ -17,19 +16,19 @@ public class Hero {
 
     private String role;
 
-    @Column(name = "status") // FIX: Disamakan dengan nama kolom di DB MySQL kamu
+    @Column(name = "status") // samakan dengan nama kolom di db kamu
     private String statusHero;
 
-    private String gambar; // Teks bebas, misal: "Chou, Kaja, Tigreal"
+    private String gambar;
 
-    @Column(name = "gambar_custom") // FIX: Disamakan dengan script SQL native fallback kita
+    @Column(name = "gambar_custom") //samakan dengan script SQL native fallback
     private String gambarKustom;
 
-    // CONSTRUCTOR KOSONG Wajib buat si JPA Hibernate
-    // Mengubah objek Java menjadi baris tabel database (ORM - Object Relational Mapping)
+    // Cconstructor kosong buat si JPA Hibernate
+    // Mengubah objek Java menjadi baris tabel database (Object Relational Mapping)
     public Hero() {}
 
-    // GETTER & SETTER (Encapsulation)
+    //getter & setter (Encapsulation)
 
     public Long getIdHero() {
         return idHero;
@@ -59,7 +58,7 @@ public class Hero {
         this.statusHero = statusHero;
     }
 
-    // FIX: Getter & Setter properti gambar diisi lengkap biar Thymeleaf tidak lelah mencari
+    //Getter & Setter properti gambar diisi lengkap biar Thymeleaf tidak lelah mencari
     public String getGambar() {
         return gambar;
     }
